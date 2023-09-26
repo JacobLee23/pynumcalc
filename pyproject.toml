@@ -31,4 +31,4 @@ homepage = "https://github.com/JacobLee23/py-calculus"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["pycalculus*"]
-excludes = [".docs*"]
+exclude = ["pycalculus.docs*"]
