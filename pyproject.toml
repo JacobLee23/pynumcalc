@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "py-calculus"
+name = "pynumcalc"
 version = "0.0.0"
-description = "A Python package for differential and integral calculus approximations."
+description = "A Python package for numerical differential and integral calculus approximations."
 readme = "README.md"
 authors = [ { name = "Jacob Lee", email = "Jacob.J.Lee@outlook.com" } ]
 license = { file = "LICENSE" }
@@ -26,9 +26,9 @@ requires-python = ">=3.6"
 dependencies = []
 
 [project.urls]
-homepage = "https://github.com/JacobLee23/py-calculus"
+homepage = "https://github.com/JacobLee23/pynumcalc"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["pycalculus*"]
-exclude = ["pycalculus.docs*"]
+include = ["pynumcalc*"]
+exclude = ["pynumcalc.docs*"]
