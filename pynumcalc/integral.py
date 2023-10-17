@@ -1,7 +1,9 @@
 """
 """
 
+import functools
 import itertools
+import operator
 import typing
 
 import numpy as np
@@ -23,7 +25,11 @@ class Integrate:
         :param upper: The upper bound of the summation interval
         :param npartitions: The number of partitions dividing the interval
         :return:
+        :raise ValueError:
         """
+        if not (npartitions > 0 and isinstance(npartitions, int)):
+            raise ValueError("parameter 'npartitions' must be a positive integer")
+
         length = (upper - lower) / npartitions
         return lower + np.arange(npartitions) * length
 
@@ -40,7 +46,11 @@ class Integrate:
         :param upper: The upper bound of the summation interval
         :param npartitions: The number of partitions dividing the interval
         :return:
+        :raise ValueError:
         """
+        if not (npartitions > 0 and isinstance(npartitions, int)):
+            raise ValueError("parameter 'npartitions' must be a positive integer")
+
         length = (upper - lower) / npartitions
         return lower + (np.arange(npartitions) + 1 / 2) * length
 
@@ -57,23 +67,40 @@ class Integrate:
         :param upper: The upper bound of the summation interval
         :param npartitions: The number of partitions dividing the interval
         :return:
+        :raise ValueError:
         """
+        if not (npartitions > 0 and isinstance(npartitions, int)):
+            raise ValueError("parameter 'npartitions' must be a positive integer")
+
         length = (upper - lower) / npartitions
         return lower + (np.arange(npartitions) + 1) * length
 
     @classmethod
+    def delta(cls, *intervals: typing.Tuple[float, float, int]) -> float:
+        """
+        :param axes:
+        :return:
+        """
+        return functools.reduce(
+            operator.mul, (b - a for a, b, _ in intervals)
+        ) / functools.reduce(
+            operator.mul, (n for _, _, n in intervals)
+        )
+
+    @classmethod
     def riemann_sum(
-        cls, function: typing.Callable[[typing.Sequence], float], axes: np.ndarray[typing.Any, np.dtype[np.float64]]
+        cls,
+        function: typing.Callable[[typing.Sequence], float],
+        axes: typing.Sequence[np.ndarray[typing.Any, np.dtype[np.float64]]]
     ) -> float:
         """
         :param function:
         :param axes:
-        :param method:
         :return:
         """
-        delta = (axes[:, 1] - axes[:, 0]).prod()
-        coordinates = np.dstack(np.meshgrid(*axes)).reshape(-1, 2)
-        return np.apply_along_axis(function, coordinates, 1).sum() * delta
+        coordinates = np.dstack(np.meshgrid(*axes)).reshape(-1, len(axes))
+
+        return np.apply_along_axis(function, coordinates, 0).sum() * cls.delta(*axes)
     
     @classmethod
     def integrate(
