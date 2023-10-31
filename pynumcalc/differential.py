@@ -26,6 +26,10 @@ class FiniteDifference:
     @staticmethod
     def forward2(f: typing.Callable[[float], float], h: float) -> typing.Callable[[float], float]:
         r"""
+        .. math
+
+            {\Delta}_{h}^{2}[f](x) = f(x + 2h) - 2f(x + h) + f(x)
+
         :param f:
         :param h:
         :return:
@@ -34,12 +38,16 @@ class FiniteDifference:
     
     @staticmethod
     def forwardn(
-        f: typing.Callable[[float], float], n: int, h: float
+        f: typing.Callable[[float], float], h: float, n: int
     ) -> typing.Callable[[float], float]:
         r"""
+        .. math
+
+            {\Delta}_{h}^{n}[f](x) = \sum_{i = 0}^{n} {(-1)}^{n - i} {{n}\choose{i}} f(x + ih)
+
         :param f:
-        :param n:
         :param h:
+        :parma n:
         :return:
         """
         array = np.arange(0, n)
@@ -63,6 +71,10 @@ class FiniteDifference:
     @staticmethod
     def backward2(f: typing.Callable[[float], float], h: float) -> typing.Callable[[float], float]:
         r"""
+        .. math
+
+            {\nabla}_{h}^{2}[f](x) = f(x) - 2f(x - h) + f(x - 2h)
+
         :param f:
         :param h:
         :return:
@@ -71,12 +83,16 @@ class FiniteDifference:
 
     @staticmethod
     def backwardn(
-        f: typing.Callable[[float], float], n: int, h: float
+        f: typing.Callable[[float], float], h: float, n: int
     ) -> typing.Callable[[float], float]:
         r"""
+        .. math
+
+            {\nabla}_{h}^{n}[f](x) = \sum_{i = 0}^{n} {(-1)}^{i} {{n}\choose{i}} f(x - ih)
+
         :param f:
-        :param n:
         :param h:
+        :param n:
         :return:
         """
         array = np.arange(0, n)
@@ -100,6 +116,10 @@ class FiniteDifference:
     @staticmethod
     def central2(f: typing.Callable[[float], float], h: float) -> typing.Callable[[float], float]:
         r"""
+        .. math
+
+            {\delta}_{h}^{2}[f](x) = f(x + h) - 2f(x) + f(x - h)
+
         :param f:
         :param h:
         :return:
@@ -108,12 +128,16 @@ class FiniteDifference:
     
     @staticmethod
     def centraln(
-        f: typing.Callable[[float], float], n: int, h: float
+        f: typing.Callable[[float], float], h: float, n: int
     ) -> typing.Callable[[float], float]:
         r"""
+        .. math
+
+            {\delta}_{h}^{n}[f](x) = \sum_{i = 0}^{n} {(-1)}^{i} {{n}\choose{i}} f(x - (\frac{n}{2} - i)h)
+
         :param f:
-        :param n:
         :param h:
+        :param n:
         :return:
         """
         array = np.arange(0, n)
