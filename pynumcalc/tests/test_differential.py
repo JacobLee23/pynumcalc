@@ -16,6 +16,8 @@ class TestFiniteDifference:
     """
     Unit tests for :py:class:`finitediff.FiniteDifference`.
     """
+    lower, upper = -10, 10
+
     @pytest.mark.parametrize(
         ("f", "expected"), [
             (lambda x: 0, lambda h: (lambda x: 0)),
@@ -36,11 +38,11 @@ class TestFiniteDifference:
         expected: typing.Callable[[float], typing.Callable[[float], float]]
     ):
         """
-        Unit tests for :py:`finitediff.FiniteDifference.forward`.
+        Unit test for :py:`finitediff.FiniteDifference.forward`.
         """
         fdiff, xfdiff = differential.FiniteDifference.forward(f, h), expected(h)
 
-        for x in range(-10, 11):
+        for x in range(self.lower, self.upper + 1):
             assert fdiff(x) == xfdiff(x), (h, x)
 
     @pytest.mark.parametrize(
@@ -51,14 +53,14 @@ class TestFiniteDifference:
     )
     def test_foward2(self, f: typing.Callable[[float], float], h: float):
         """
-        Unit tests for :py:`finitediff.FiniteDifference.forward`.
+        Unit test for :py:`finitediff.FiniteDifference.forward`.
         """
         fdiff = differential.FiniteDifference.forward2(f, h)
         xfdiff = differential.FiniteDifference.forward(
             differential.FiniteDifference.forward(f, h), h
         )
 
-        for x in range(-10, 11):
+        for x in range(self.lower, self.upper + 1):
             assert fdiff(x) == xfdiff(x), (h, x)
 
     @pytest.mark.parametrize(
@@ -69,7 +71,7 @@ class TestFiniteDifference:
     )
     def test_forwardn(self, f: typing.Callable[[float], float], h: float):
         """
-        Unit tests for :py:`finitediff.FiniteDifference.forwardn`.
+        Unit test for :py:`finitediff.FiniteDifference.forwardn`.
         """
         fdiff1 = differential.FiniteDifference.forwardn(f, h, 1)
         xfdiff1 = differential.FiniteDifference.forward(f, h)
@@ -77,7 +79,7 @@ class TestFiniteDifference:
         fdiff2 = differential.FiniteDifference.forwardn(f, h, 2)
         xfdiff2 = differential.FiniteDifference.forward2(f, h)
 
-        for x in range(-10, 11):
+        for x in range(self.lower, self.upper + 1):
             assert fdiff1(x) == xfdiff1(x), (h, x, 1)
             assert fdiff2(x) == xfdiff2(x), (h, x, 2)
 
@@ -101,11 +103,11 @@ class TestFiniteDifference:
         expected: typing.Callable[[float], typing.Callable[[float], float]]
     ):
         """
-        Unit tests for :py:`finitediff.FiniteDifference.backward`.
+        Unit test for :py:`finitediff.FiniteDifference.backward`.
         """
         fdiff, xfdiff = differential.FiniteDifference.backward(f, h), expected(h)
 
-        for x in range(-10, 11):
+        for x in range(self.lower, self.upper + 1):
             assert fdiff(x) == xfdiff(x), (h, x)
 
     @pytest.mark.parametrize(
@@ -116,14 +118,14 @@ class TestFiniteDifference:
     )
     def test_backward2(self, f: typing.Callable[[float], float], h: float):
         """
-        Unit tests for :py:`finitediff.FiniteDifference.backward2`.
+        Unit test for :py:`finitediff.FiniteDifference.backward2`.
         """
         fdiff = differential.FiniteDifference.backward2(f, h)
         xfdiff = differential.FiniteDifference.backward(
             differential.FiniteDifference.backward(f, h), h
         )
 
-        for x in range(-10, 11):
+        for x in range(self.lower, self.upper + 1):
             assert fdiff(x) == xfdiff(x), (h, x)
 
     @pytest.mark.parametrize(
@@ -134,7 +136,7 @@ class TestFiniteDifference:
     )
     def test_backwardn(self, f: typing.Callable[[float], float], h: float):
         """
-        Unit tests for :py:`finitediff.FiniteDifference.backwardn`.
+        Unit test for :py:`finitediff.FiniteDifference.backwardn`.
         """
         fdiff1 = differential.FiniteDifference.backwardn(f, h, 1)
         xfdiff1 = differential.FiniteDifference.backward(f, h)
@@ -142,7 +144,7 @@ class TestFiniteDifference:
         fdiff2 = differential.FiniteDifference.backwardn(f, h, 2)
         xfdiff2 = differential.FiniteDifference.backward2(f, h)
 
-        for x in range(-10, 11):
+        for x in range(self.lower, self.upper + 1):
             assert fdiff1(x) == xfdiff1(x), (h, x, 1)
             assert fdiff2(x) == xfdiff2(x), (h, x, 2)
 
@@ -166,11 +168,11 @@ class TestFiniteDifference:
         expected: typing.Callable[[float], typing.Callable[[float], float]]
     ):
         """
-        Unit tests for :py:`finitediff.FiniteDifference.central`.
+        Unit test for :py:`finitediff.FiniteDifference.central`.
         """
         fdiff, xfdiff = differential.FiniteDifference.central(f, h), expected(h)
 
-        for x in range(-10, 11):
+        for x in range(self.lower, self.upper + 1):
             assert fdiff(x) == xfdiff(x), (h, x)
 
     @pytest.mark.parametrize(
@@ -181,14 +183,14 @@ class TestFiniteDifference:
     )
     def test_central2(self, f: typing.Callable[[float], float], h: float):
         """
-        Unit tests for :py:`finitediff.FiniteDifference.central2`.
+        Unit test for :py:`finitediff.FiniteDifference.central2`.
         """
         fdiff = differential.FiniteDifference.central2(f, h)
         xfdiff = differential.FiniteDifference.central(
             differential.FiniteDifference.central(f, h), h
         )
 
-        for x in range(-10, 11):
+        for x in range(self.lower, self.upper + 1):
             assert fdiff(x) == xfdiff(x), (h, x)
 
     @pytest.mark.parametrize(
@@ -199,7 +201,7 @@ class TestFiniteDifference:
     )
     def test_centraln(self, f: typing.Callable[[float], float], h: float):
         """
-        Unit tests for :py:`finitediff.FiniteDifference.centraln`.
+        Unit test for :py:`finitediff.FiniteDifference.centraln`.
         """
         fdiff1 = differential.FiniteDifference.centraln(f, h, 1)
         xfdiff1 = differential.FiniteDifference.central(f, h)
@@ -207,6 +209,63 @@ class TestFiniteDifference:
         fdiff2 = differential.FiniteDifference.centraln(f, h, 2)
         xfdiff2 = differential.FiniteDifference.central2(f, h)
 
-        for x in range(-10, 11):
+        for x in range(self.lower, self.upper + 1):
             assert fdiff1(x) == xfdiff1(x), (h, x, 1)
             assert fdiff2(x) == xfdiff2(x), (h, x, 2)
+
+
+@pytest.mark.parametrize(
+    "h", [2 ** n for n in range(0, -10, -1)]
+)
+class TestDifferenceQuotient:
+    """
+    Unit tests for :py:class:`differential.DifferenceQuotient`.
+    """
+    lower, upper = -10, 10
+
+    @pytest.mark.parametrize(
+        ("f", "expected"), []
+    )
+    def test_quotient(
+        self, f: typing.Callable[[float], float], h: float,
+        expected: typing.Callable[[float], typing.Callable[[float], float]]
+    ):
+        """
+        Unit test for :py:meth:`differential.DifferenceQuotient.quotient`.
+        """
+        dquot, xdquot = differential.DifferenceQuotient.quotient(f, h), expected(h)
+
+        for x in range(self.lower, self.upper + 1):
+            assert dquot(x) == xdquot(x), (h, x)
+
+    @pytest.mark.parametrize(
+        "f", []
+    )
+    def test_quotient(self, f: typing.Callable[[float], float], h: float):
+        """
+        Unit test for :py:meth:`differential.DifferenceQuotient.quotient`.
+        """
+        dquot = differential.DifferenceQuotient.quotient2(f, h)
+        xdquot = differential.DifferenceQuotient.quotient(
+            differential.DifferenceQuotient.quotient(f, h)
+        )
+
+        for x in range(self.lower, self.upper + 1):
+            assert dquot(x) == xdquot(x), (h, x)
+
+    @pytest.mark.parametrize(
+        "f", []
+    )
+    def test_quotient(self, f: typing.Callable[[float], float], h: float):
+        """
+        Unit test for :py:meth:`differential.DifferenceQuotient.quotient`.
+        """
+        dquot1 = differential.DifferenceQuotient.quotientn(f, h, 1)
+        xdquot1 = differential.DifferenceQuotient.quotient(f, h)
+
+        dquot2 = differential.DifferenceQuotient.quotientn(f, h, 2)
+        xdquot2 = differential.DifferenceQuotient.quotient2(f, h)
+
+        for x in range(self.lower, self.upper + 1):
+            assert dquot1(x) == xdquot1(x), (h, x, 1)
+            assert dquot2(x) == xdquot2(x), (h, x, 2)

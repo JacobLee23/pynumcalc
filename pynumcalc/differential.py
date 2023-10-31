@@ -10,8 +10,10 @@ import scipy.special
 class FiniteDifference:
     """
     """
-    @staticmethod
-    def forward(f: typing.Callable[[float], float], h: float) -> typing.Callable[[float], float]:
+    @classmethod
+    def forward(
+        cls, f: typing.Callable[[float], float], h: float
+    ) -> typing.Callable[[float], float]:
         r"""
         .. math
 
@@ -23,8 +25,10 @@ class FiniteDifference:
         """
         return lambda x: f(x + h) - f(x)
     
-    @staticmethod
-    def forward2(f: typing.Callable[[float], float], h: float) -> typing.Callable[[float], float]:
+    @classmethod
+    def forward2(
+        cls, f: typing.Callable[[float], float], h: float
+    ) -> typing.Callable[[float], float]:
         r"""
         .. math
 
@@ -36,9 +40,9 @@ class FiniteDifference:
         """
         return lambda x: f(x + 2 * h) - 2 * f(x + h) + f(x)
     
-    @staticmethod
+    @classmethod
     def forwardn(
-        f: typing.Callable[[float], float], h: float, n: int
+        cls, f: typing.Callable[[float], float], h: float, n: int
     ) -> typing.Callable[[float], float]:
         r"""
         .. math
@@ -55,8 +59,10 @@ class FiniteDifference:
             (-1) ** (n - array) * scipy.special.comb(n, array) * f(x + array * h)
         ).sum()
 
-    @staticmethod
-    def backward(f: typing.Callable[[float], float], h: float) -> typing.Callable[[float], float]:
+    @classmethod
+    def backward(
+        cls, f: typing.Callable[[float], float], h: float
+    ) -> typing.Callable[[float], float]:
         r"""
         .. math
 
@@ -68,8 +74,10 @@ class FiniteDifference:
         """
         return lambda x: f(x) - f(x - h)
     
-    @staticmethod
-    def backward2(f: typing.Callable[[float], float], h: float) -> typing.Callable[[float], float]:
+    @classmethod
+    def backward2(
+        cls, f: typing.Callable[[float], float], h: float
+    ) -> typing.Callable[[float], float]:
         r"""
         .. math
 
@@ -81,9 +89,9 @@ class FiniteDifference:
         """
         return lambda x: f(x) - 2 * f(x - h) + f(x - 2 * h)
 
-    @staticmethod
+    @classmethod
     def backwardn(
-        f: typing.Callable[[float], float], h: float, n: int
+        cls, f: typing.Callable[[float], float], h: float, n: int
     ) -> typing.Callable[[float], float]:
         r"""
         .. math
@@ -100,8 +108,10 @@ class FiniteDifference:
             (-1) ** array * scipy.special.comb(n, array) * f(x - array * h)
         ).sum()
 
-    @staticmethod
-    def central(f: typing.Callable[[float], float], h: float) -> typing.Callable[[float], float]:
+    @classmethod
+    def central(
+        cls, f: typing.Callable[[float], float], h: float
+    ) -> typing.Callable[[float], float]:
         r"""
         .. math
 
@@ -113,8 +123,10 @@ class FiniteDifference:
         """
         return lambda x: f(x + h / 2) - f(x - h / 2)
     
-    @staticmethod
-    def central2(f: typing.Callable[[float], float], h: float) -> typing.Callable[[float], float]:
+    @classmethod
+    def central2(
+        cls, f: typing.Callable[[float], float], h: float
+    ) -> typing.Callable[[float], float]:
         r"""
         .. math
 
@@ -126,9 +138,9 @@ class FiniteDifference:
         """
         return lambda x: f(x + h) - 2 * f(x) + f(x - h)
     
-    @staticmethod
+    @classmethod
     def centraln(
-        f: typing.Callable[[float], float], h: float, n: int
+        cls, f: typing.Callable[[float], float], h: float, n: int
     ) -> typing.Callable[[float], float]:
         r"""
         .. math
@@ -144,3 +156,53 @@ class FiniteDifference:
         return lambda x: (
             (-1) ** array * scipy.special.comb(n, array) * f(x + (n / 2 - array) * h)
         ).sum()
+
+
+class DifferenceQuotient:
+    """
+    """
+    @classmethod
+    def quotient(cls, f: typing.Callable[[float], float], h: float) -> typing.Callable[[float], float]:
+        """
+        :param f:
+        :param h:
+        :return:
+        """
+        try:
+            return FiniteDifference.central(f, h) / h
+        except ValueError:
+            try:
+                return FiniteDifference.forward(f, h) / h
+            except ValueError:
+                return FiniteDifference.backward(f, h) / h
+
+    @classmethod
+    def quotient2(cls, f: typing.Callable[[float], float], h: float) -> typing.Callable[[float], float]:
+        """
+        :param f:
+        :param h:
+        :return:
+        """
+        try:
+            return FiniteDifference.central2(f, h) / h
+        except ValueError:
+            try:
+                return FiniteDifference.forward2(f, h) / h
+            except ValueError:
+                return FiniteDifference.backward2(f, h) / h
+            
+    @classmethod
+    def quotientn(cls, f: typing.Callable[[float], float], h: float, n: int) -> typing.Callable[[float], float]:
+        """
+        :param f:
+        :param h:
+        :param n:
+        :return:
+        """
+        try:
+            return FiniteDifference.centraln(f, h, n) / h
+        except ValueError:
+            try:
+                return FiniteDifference.forwardn(f, h, n) / h
+            except ValueError:
+                return FiniteDifference.backwardn(f, h, n) / h
