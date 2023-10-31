@@ -9,7 +9,7 @@ import typing
 import numpy as np
 
 
-class Integrate:
+class Partitions:
     """
     """
     @staticmethod
@@ -75,6 +75,10 @@ class Integrate:
         length = (upper - lower) / npartitions
         return lower + (np.arange(npartitions) + 1) * length
 
+
+class Integrate:
+    """
+    """
     @classmethod
     def delta(cls, *intervals: typing.Tuple[float, float, int]) -> float:
         """
@@ -113,7 +117,7 @@ class Integrate:
         :param intervals:
         :return:
         """
-        dimensions = np.array([[cls.left(*x), cls.right(*x)] for x in intervals])
+        dimensions = np.array([[Partitions.left(*x), Partitions.right(*x)] for x in intervals])
 
         return sum(
             cls.riemann_sum(

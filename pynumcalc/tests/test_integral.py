@@ -7,52 +7,57 @@ import typing
 import numpy as np
 import pytest
 
-from pynumcalc import Integrate
+from pynumcalc import integral
+
+
+@pytest.mark.parametrize(
+    ("lower", "upper", "npartitions"), [
+        (0, 0, 1), (0, 0, 2), (0, 0, 4), (0, 0, 8), (0, 0, 16),
+        (0, 1, 1), (0, 2, 1), (0, 4, 1), (0, 8, 1), (0, 16, 1),
+        (-1, 0, 1), (-2, 0, 1), (-4, 0, 1), (-8, 0, 1), (-16, 0, 1),
+        (-1, 1, 1), (-2, 2, 1), (-4, 4, 1), (-8, 8, 1), (-16, 16, 1),
+        (-1, 1, 2), (-1, 1, 2), (-1, 1, 4), (-1, 1, 8), (-1, 1, 16)
+    ]
+)
+class TestPartitions:
+    """
+    Unit tests for :py:class:`integral.Partitions`.
+    """
+    def test_left(self, lower: float, upper: float, npartitions: int):
+        """
+        Unit test for :py:meth:`integral.Partitions.left`.
+        """
+        array = integral.Partitions.left(lower, upper, npartitions)
+
+        assert array.size == npartitions
+        assert array[0] == lower
+        assert array[-1] == upper - (upper - lower) / npartitions
+
+    def test_middle(self, lower: float, upper: float, npartitions: int):
+        """
+        Unit test for :py:meth:`integral.Partitions.middle`.
+        """
+        array = integral.Partitions.middle(lower, upper, npartitions)
+
+        assert array.size == npartitions
+        assert array[0] == lower + (upper - lower) / (2 * npartitions)
+        assert array[-1] == upper - (upper - lower) / (2 * npartitions)
+
+    def test_right(self, lower: float, upper: float, npartitions: int):
+        """
+        Unit test for :py:meth:`integral.Partitions.right`.
+        """
+        array = integral.Partitions.right(lower, upper, npartitions)
+
+        assert array.size == npartitions
+        assert array[0] == lower + (upper - lower) / npartitions
+        assert array[-1] == upper
 
 
 class TestIntegrate:
     """
-    Unit tests for :py:class:`Integral`.
+    Unit tests for :py:class:`integral.Integrate`.
     """
-    @pytest.mark.parametrize(
-        ("lower", "upper", "npartitions", "expected"), [
-            (0, 0, 1, np.array([0])), (0, 0, 5, np.array([0, 0, 0, 0, 0])),
-            (0, 1, 1, np.array([0])), (0, 5, 5, np.array([0, 1, 2, 3, 4])),
-            (-1, 0, 1, np.array([-1])), (-5, 0, 5, np.array([-5, -4, -3, -2, -1]))
-        ]
-    )
-    def test_left(self, lower: float, upper: float, npartitions: int, expected: np.ndarray[typing.Any, np.dtype[np.float64]]):
-        """
-        Unit test for :py:meth:`Integrate.left`.
-        """
-        assert np.array_equal(Integrate.left(lower, upper, npartitions), expected)
-
-    @pytest.mark.parametrize(
-        ("lower", "upper", "npartitions", "expected"), [
-            (0, 0, 1, np.array([0])), (0, 0, 5, np.array([0, 0, 0, 0, 0])),
-            (0, 1, 1, np.array([0.5])), (0, 5, 5, np.array([0.5, 1.5, 2.5, 3.5, 4.5])),
-            (-1, 0, 1, np.array([-0.5])), (-5, 0, 5, np.array([-4.5, -3.5, -2.5, -1.5, -0.5]))
-        ]
-    )
-    def test_middle(self, lower: float, upper: float, npartitions: int, expected: np.ndarray[typing.Any, np.dtype[np.float64]]):
-        """
-        Unit test for :py:meth:`Integrate.middle`.
-        """
-        assert np.array_equal(Integrate.middle(lower, upper, npartitions), expected)
-
-    @pytest.mark.parametrize(
-        ("lower", "upper", "npartitions", "expected"), [
-            (0, 0, 1, np.array([0])), (0, 0, 5, np.array([0, 0, 0, 0, 0])),
-            (0, 1, 1, np.array([1])), (0, 5, 5, np.array([1, 2, 3, 4, 5])),
-            (-1, 0, 1, np.array([0])), (-5, 0, 5, np.array([-4, -3, -2, -1, 0]))
-        ]
-    )
-    def test_right(self, lower: float, upper: float, npartitions: int, expected: np.ndarray[typing.Any, np.dtype[np.float64]]):
-        """
-        Unit test for :py:meth:`Integrate.right`.
-        """
-        assert np.array_equal(Integrate.right(lower, upper, npartitions), expected)
-
     @pytest.mark.parametrize(
         ("intervals", "expected"), [
             ([(0, 0, 1)], 0),
@@ -88,7 +93,7 @@ class TestIntegrate:
         """
         Unit test for :py:meth:`Integrate.delta`.
         """
-        assert Integrate.delta(*intervals) == expected
+        assert integral.Integrate.delta(*intervals) == expected
 
     @pytest.mark.parametrize(
         ("function", "intervals", "expected"), [
@@ -145,11 +150,11 @@ class TestIntegrate:
         Unit test for :py:meth:`Integrate.riemann_sum`.
         """
         axes = (
-            [Integrate.left(*x) for x in intervals],
-            [Integrate.middle(*x) for x in intervals],
-            [Integrate.right(*x) for x in intervals]
+            [integral.Partitions.left(*x) for x in intervals],
+            [integral.Partitions.middle(*x) for x in intervals],
+            [integral.Partitions.right(*x) for x in intervals]
         )
-        delta = Integrate.delta(*intervals)
-        rsums = tuple(Integrate.riemann_sum(function, a, delta) for a in axes)
+        delta = integral.Integrate.delta(*intervals)
+        rsums = tuple(integral.Integrate.riemann_sum(function, a, delta) for a in axes)
 
         assert rsums == expected
