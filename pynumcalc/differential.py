@@ -50,7 +50,7 @@ class FiniteDifference:
         :parma n:
         :return:
         """
-        array = np.arange(0, n)
+        array = np.arange(0, n + 1)
         return lambda x: (
             (-1) ** (n - array) * scipy.special.comb(n, array) * f(x + array * h)
         ).sum()
@@ -95,7 +95,7 @@ class FiniteDifference:
         :param n:
         :return:
         """
-        array = np.arange(0, n)
+        array = np.arange(0, n + 1)
         return lambda x: (
             (-1) ** array * scipy.special.comb(n, array) * f(x - array * h)
         ).sum()
@@ -133,14 +133,14 @@ class FiniteDifference:
         r"""
         .. math
 
-            {\delta}_{h}^{n}[f](x) = \sum_{i = 0}^{n} {(-1)}^{i} {{n}\choose{i}} f(x - (\frac{n}{2} - i)h)
+            {\delta}_{h}^{n}[f](x) = \sum_{i = 0}^{n} {(-1)}^{i} {{n}\choose{i}} f(x + (\frac{n}{2} - i)h)
 
         :param f:
         :param h:
         :param n:
         :return:
         """
-        array = np.arange(0, n)
+        array = np.arange(0, n + 1)
         return lambda x: (
-            (-1) ** array * scipy.special.comb(n, array) * f(x - (n / 2 - array) * h)
+            (-1) ** array * scipy.special.comb(n, array) * f(x + (n / 2 - array) * h)
         ).sum()
