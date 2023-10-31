@@ -1,4 +1,4 @@
 """
 """
 
-from .integral import Integrate
+from . import integral

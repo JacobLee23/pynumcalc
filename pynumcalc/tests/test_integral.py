@@ -54,9 +54,9 @@ class TestPartitions:
         assert array[-1] == upper
 
 
-class TestIntegrate:
+class TestRiemannSum:
     """
-    Unit tests for :py:class:`integral.Integrate`.
+    Unit tests for :py:class:`integral.RiemannSum`.
     """
     @pytest.mark.parametrize(
         ("intervals", "expected"), [
@@ -93,7 +93,7 @@ class TestIntegrate:
         """
         Unit test for :py:meth:`Integrate.delta`.
         """
-        assert integral.Integrate.delta(*intervals) == expected
+        assert integral.RiemannSum.delta(*intervals) == expected
 
     @pytest.mark.parametrize(
         ("function", "intervals", "expected"), [
@@ -154,7 +154,7 @@ class TestIntegrate:
             [integral.Partitions.middle(*x) for x in intervals],
             [integral.Partitions.right(*x) for x in intervals]
         )
-        delta = integral.Integrate.delta(*intervals)
-        rsums = tuple(integral.Integrate.riemann_sum(function, a, delta) for a in axes)
+        delta = integral.RiemannSum.delta(*intervals)
+        rsums = tuple(integral.RiemannSum.sum(function, a, delta) for a in axes)
 
         assert rsums == expected
