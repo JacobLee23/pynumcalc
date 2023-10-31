@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pynumcalc"
-version = "0.0.0"
+version = "0.1.0"
 description = "A Python package for numerical differential and integral calculus approximations."
 readme = "README.md"
 authors = [ { name = "Jacob Lee", email = "Jacob.J.Lee@outlook.com" } ]
