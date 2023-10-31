@@ -91,20 +91,22 @@ class Integrate:
     def riemann_sum(
         cls,
         function: typing.Callable[[typing.Sequence], float],
-        axes: typing.Sequence[np.ndarray[typing.Any, np.dtype[np.float64]]]
+        axes: typing.Sequence[np.ndarray[typing.Any, np.dtype[np.float64]]],
+        delta: float
     ) -> float:
         """
         :param function:
         :param axes:
+        :param delta:
         :return:
         """
-        coordinates = np.dstack(np.meshgrid(*axes)).reshape(-1, len(axes))
+        return sum(map(function, itertools.product(*axes))) * delta
 
-        return np.apply_along_axis(function, coordinates, 0).sum() * cls.delta(*axes)
-    
     @classmethod
     def integrate(
-        cls, function: typing.Callable[[typing.Sequence], float], *intervals: typing.Tuple[float, float, int]
+        cls,
+        function: typing.Callable[[typing.Sequence], float],
+        *intervals: typing.Tuple[float, float, int]
     ) -> float:
         """
         :param function:
@@ -114,6 +116,9 @@ class Integrate:
         dimensions = np.array([[cls.left(*x), cls.right(*x)] for x in intervals])
 
         return sum(
-            cls.riemann_sum(function, np.array([a[i] for a, i in zip(dimensions, indices)]))
-            for indices in itertools.product((0, 1), repeat=len(intervals))
+            cls.riemann_sum(
+                function,
+                np.array([a[i] for a, i in zip(dimensions, indices)]),
+                cls.delta(*intervals)
+            ) for indices in itertools.product((0, 1), repeat=len(intervals))
         ) / pow(2, len(intervals))
