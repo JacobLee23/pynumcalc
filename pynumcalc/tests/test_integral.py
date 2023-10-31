@@ -4,7 +4,6 @@ Unit tests for :py:mod:`pynumcalc.integral`.
 
 import typing
 
-import numpy as np
 import pytest
 
 from pynumcalc import integral
@@ -89,7 +88,9 @@ class TestRiemannSum:
             ([(-1, 1, 5), (-2, 2, 25), (-3, 3, 125)], 48/15625)
         ]
     )
-    def test_delta(self, intervals: typing.Sequence[typing.Tuple[float, float, int]], expected: float):
+    def test_delta(
+        self, intervals: typing.Sequence[typing.Tuple[float, float, int]], expected: float
+    ):
         """
         Unit test for :py:meth:`Integrate.delta`.
         """

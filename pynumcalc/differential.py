@@ -24,7 +24,7 @@ class FiniteDifference:
         :return:
         """
         return lambda x: f(x + h) - f(x)
-    
+
     @classmethod
     def forward2(
         cls, f: typing.Callable[[float], float], h: float
@@ -39,7 +39,7 @@ class FiniteDifference:
         :return:
         """
         return lambda x: f(x + 2 * h) - 2 * f(x + h) + f(x)
-    
+
     @classmethod
     def forwardn(
         cls, f: typing.Callable[[float], float], h: float, n: int
@@ -73,7 +73,7 @@ class FiniteDifference:
         :return:
         """
         return lambda x: f(x) - f(x - h)
-    
+
     @classmethod
     def backward2(
         cls, f: typing.Callable[[float], float], h: float
@@ -122,7 +122,7 @@ class FiniteDifference:
         :return:
         """
         return lambda x: f(x + h / 2) - f(x - h / 2)
-    
+
     @classmethod
     def central2(
         cls, f: typing.Callable[[float], float], h: float
@@ -137,7 +137,7 @@ class FiniteDifference:
         :return:
         """
         return lambda x: f(x + h) - 2 * f(x) + f(x - h)
-    
+
     @classmethod
     def centraln(
         cls, f: typing.Callable[[float], float], h: float, n: int
@@ -162,7 +162,9 @@ class DifferenceQuotient:
     """
     """
     @classmethod
-    def quotient(cls, f: typing.Callable[[float], float], h: float) -> typing.Callable[[float], float]:
+    def quotient(
+        cls, f: typing.Callable[[float], float], h: float
+    ) -> typing.Callable[[float], float]:
         """
         :param f:
         :param h:
@@ -177,7 +179,9 @@ class DifferenceQuotient:
                 return FiniteDifference.backward(f, h) / h
 
     @classmethod
-    def quotient2(cls, f: typing.Callable[[float], float], h: float) -> typing.Callable[[float], float]:
+    def quotient2(
+        cls, f: typing.Callable[[float], float], h: float
+    ) -> typing.Callable[[float], float]:
         """
         :param f:
         :param h:
@@ -190,9 +194,11 @@ class DifferenceQuotient:
                 return FiniteDifference.forward2(f, h) / h
             except ValueError:
                 return FiniteDifference.backward2(f, h) / h
-            
+
     @classmethod
-    def quotientn(cls, f: typing.Callable[[float], float], h: float, n: int) -> typing.Callable[[float], float]:
+    def quotientn(
+        cls, f: typing.Callable[[float], float], h: float, n: int
+    ) -> typing.Callable[[float], float]:
         """
         :param f:
         :param h:
