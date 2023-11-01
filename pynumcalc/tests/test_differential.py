@@ -224,7 +224,19 @@ class TestDifferenceQuotient:
     lower, upper = -10, 10
 
     @pytest.mark.parametrize(
-        ("f", "expected"), []
+        ("f", "expected"), [
+            (lambda x: 0, lambda h: (lambda x: 0)),
+            (lambda x: 1, lambda h: (lambda x: 0)),
+            (lambda x: -1, lambda h: (lambda x: 0)),
+            (lambda x: x, lambda h: (lambda x: 1)),
+            (lambda x: -x, lambda h: (lambda x: -1)),
+
+            (lambda x: x ** 2, lambda h: (lambda x: 2 * x)),
+            (lambda x: -x ** 2, lambda h: (lambda x: -2 * x)),
+            (lambda x: x ** 3, lambda h: (lambda x: 3 * x ** 2 + h ** 2 / 4)),
+            (lambda x: -x ** 3, lambda h: (lambda x: -3 * x ** 2 - h ** 2 / 4)),
+            (lambda x: (-x) ** 3, lambda h: (lambda x: -3 * x ** 2 - h ** 2 / 4))
+        ]
     )
     def test_quotient(
         self, f: typing.Callable[[float], float], h: float,
@@ -239,24 +251,30 @@ class TestDifferenceQuotient:
             assert dquot(x) == xdquot(x), (h, x)
 
     @pytest.mark.parametrize(
-        "f", []
+        "f", [
+            lambda x: 0, lambda x: 1, lambda x: -1, lambda x: x, lambda x: -x,
+            lambda x: x ** 2, lambda x: -x ** 2, lambda x: x ** 3, lambda x: -x ** 3, lambda x: (-x) ** 3
+        ]
     )
-    def test_quotient(self, f: typing.Callable[[float], float], h: float):
+    def test_quotient2(self, f: typing.Callable[[float], float], h: float):
         """
         Unit test for :py:meth:`differential.DifferenceQuotient.quotient`.
         """
         dquot = differential.DifferenceQuotient.quotient2(f, h)
         xdquot = differential.DifferenceQuotient.quotient(
-            differential.DifferenceQuotient.quotient(f, h)
+            differential.DifferenceQuotient.quotient(f, h), h
         )
 
         for x in range(self.lower, self.upper + 1):
             assert dquot(x) == xdquot(x), (h, x)
 
     @pytest.mark.parametrize(
-        "f", []
+        "f", [
+            lambda x: 0, lambda x: 1, lambda x: -1, lambda x: x, lambda x: -x,
+            lambda x: x ** 2, lambda x: -x ** 2, lambda x: x ** 3, lambda x: -x ** 3, lambda x: (-x) ** 3
+        ]
     )
-    def test_quotient(self, f: typing.Callable[[float], float], h: float):
+    def test_quotientn(self, f: typing.Callable[[float], float], h: float):
         """
         Unit test for :py:meth:`differential.DifferenceQuotient.quotient`.
         """

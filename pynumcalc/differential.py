@@ -171,12 +171,14 @@ class DifferenceQuotient:
         :return:
         """
         try:
-            return FiniteDifference.central(f, h) / h
+            fdiff = FiniteDifference.central(f, h)
         except ValueError:
             try:
-                return FiniteDifference.forward(f, h) / h
+                fdiff = FiniteDifference.foward(f, h)
             except ValueError:
-                return FiniteDifference.backward(f, h) / h
+                fdiff = FiniteDifference.backward(f, h)
+
+        return lambda x: fdiff(x) / h
 
     @classmethod
     def quotient2(
@@ -188,12 +190,14 @@ class DifferenceQuotient:
         :return:
         """
         try:
-            return FiniteDifference.central2(f, h) / h
+            fdiff = FiniteDifference.central2(f, h)
         except ValueError:
             try:
-                return FiniteDifference.forward2(f, h) / h
+                fdiff = FiniteDifference.foward2(f, h)
             except ValueError:
-                return FiniteDifference.backward2(f, h) / h
+                fdiff = FiniteDifference.backward2(f, h)
+
+        return lambda x: fdiff(x) / (h ** 2)
 
     @classmethod
     def quotientn(
@@ -206,9 +210,11 @@ class DifferenceQuotient:
         :return:
         """
         try:
-            return FiniteDifference.centraln(f, h, n) / h
+            fdiff = FiniteDifference.centraln(f, h, n)
         except ValueError:
             try:
-                return FiniteDifference.forwardn(f, h, n) / h
+                fdiff = FiniteDifference.fowardn(f, h, n)
             except ValueError:
-                return FiniteDifference.backwardn(f, h, n) / h
+                fdiff = FiniteDifference.backwardn(f, h, n)
+
+        return lambda x: fdiff(x) / (h ** n)
