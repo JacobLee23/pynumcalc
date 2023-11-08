@@ -12,6 +12,7 @@ build = "*"
 twine = "*"
 pytest = "*"
 sphinx = "*"
+furo = "*"
 
 [requires]
 python_version = "3.11"
