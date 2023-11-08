@@ -26,6 +26,43 @@ class FiniteDifference:
         return lambda x: f(x + h) - f(x)
 
     @classmethod
+    def pforward(
+        cls, f: typing.Callable[[typing.Sequence[float]], float], h: float, dimensions: int,
+        *, dim: typing.Optional[int] = None
+    ) -> typing.Sequence[typing.Callable[[typing.Sequence[float]], float]]:
+        r"""
+        .. math
+
+            {\Delta}_{h}{[f]}(\vec{x}) = [
+                {\Delta}_{h}{[f]}_{{x}_{i}}(\vec{x})
+            ], 1 \leq i \leq \dim{\vec{x}}
+
+            {\Delta}_{h}{[f]}_{{x}_{i}}(\vec{x}) = f(
+                {x}_{1}, \dots, {x}_{i} + h, \dots, {x}_{\dim{\vec{x}}}
+            ) - f(\vec{x})
+
+        :param f:
+        :param h:
+        :param dimensions:
+        :param dim:
+        :return:
+        """
+        def partial(
+            f_: typing.Callable[[typing.Sequence[float]], float], h_: float, dim_: int
+        ) -> typing.Callable[[typing.Sequence[float]], float]:
+            """
+            :param f_:
+            :param h_:
+            :param dim_:
+            :return:
+            """
+            return lambda x: f_([*x[:dim_], x[dim_] + h_, *x[(dim_ + 1):]]) - f_(x)
+
+        if dim is not None:
+            return partial(f, h, dim)
+        return [(partial(f, h, i)) for i in range(dimensions)]
+
+    @classmethod
     def forward2(
         cls, f: typing.Callable[[float], float], h: float
     ) -> typing.Callable[[float], float]:
@@ -41,6 +78,49 @@ class FiniteDifference:
         return lambda x: f(x + 2 * h) - 2 * f(x + h) + f(x)
 
     @classmethod
+    def pforward2(
+        cls, f: typing.Callable[[typing.Sequence[float]], float], h: float, dimensions: int,
+        *, dim: int = None
+    ) -> typing.Sequence[typing.Callable[[typing.Sequence[float]], float]]:
+        r"""
+        .. math
+
+            {\Delta}_{h}{[f]}(\vec{x}) = [
+                {\Delta}_{h}{[f]}_{{x}_{i}}(\vec{x})
+            ], 1 \leq i \leq \dim{\vec{x}}
+
+            {\Delta}_{h}{[f]}_{{x}_{i}}(\vec{x}) = f(
+                {x}_{1}, \dots, {x}_{i} + 2h, \dots, {x}_{\dim{\vec{x}}}
+            ) - 2f(
+                {x}_{1}, \dots, {x}_{i} + h, \dots, {x}_{\dim{\vec{x}}}
+            ) + f(\vec{x})
+
+        :param f:
+        :param h:
+        :param dimensions:
+        :param dim:
+        :return:
+        """
+        def partial(
+            f_: typing.Callable[[typing.Sequence[float]], float], h_: float, dim_: int
+        ) -> typing.Callable[[typing.Sequence[float]], float]:
+            """
+            :param f_:
+            :param h_:
+            :param dim_:
+            :return:
+            """
+            return lambda x: f_(
+                [*x[:dim_], x[dim_] + 2 * h_, *x[(dim_ + 1):]]
+            ) - 2 * f_(
+                [*x[:dim_], x[dim_] + h_, *x[(dim_ + 1):]]
+            ) + f_(x)
+
+        if dim is not None:
+            return partial(f, h, dim)
+        return [partial(f, h, i) for i in range(dimensions)]
+
+    @classmethod
     def forwardn(
         cls, f: typing.Callable[[float], float], h: float, n: int
     ) -> typing.Callable[[float], float]:
@@ -51,13 +131,57 @@ class FiniteDifference:
 
         :param f:
         :param h:
-        :parma n:
+        :param n:
         :return:
         """
         array = np.arange(0, n + 1)
         return lambda x: (
             (-1) ** (n - array) * scipy.special.comb(n, array) * f(x + array * h)
         ).sum()
+
+    @classmethod
+    def pforwardn(
+        cls, f: typing.Callable[[float], float], h: float, n: int, dimensions: int,
+        *, dim: int = None
+    ) -> typing.Sequence[typing.Callable[[typing.Sequence[float]], float]]:
+        r"""
+        .. math
+
+            {\Delta}_{h}{[f]}(\vec{x}) = [
+                {\Delta}_{h}{[f]}_{{x}_{i}}(\vec{x})
+            ], 1 \leq i \leq \dim{\vec{x}}
+
+            {\Delta}_{h}{[f]}_{{x}_{i}}(\vec{x}) = \sum_{i = 0}^{n} {(-1)}^{n - i} {{n}\choose{i}} f(
+                {x}_{1}, \dots, {x}_{i} + ih, \dots, {x}_{\dim{\vec{x}}}
+            )
+
+        :param f:
+        :param h:
+        :param n:
+        :param dimensions:
+        :param dim:
+        :return:
+        """
+        def partial(
+            f_: typing.Callable[[typing.Sequence[float]], float], h_: float, n_: int, dim_: int
+        ) -> typing.Callable[[typing.Sequence[float]], float]:
+            """
+            :param f_:
+            :param h_:
+            :param h_:
+            :param dim_:
+            :return:
+            """
+            array = np.arange(0, n + 1)
+            return lambda x: (
+                (-1) ** (n_ - array) * scipy.special.comb(n_, array) * f_(
+                    [*x[:dim_], x[dim_] + array * h_, *x[(dim_ + 1):]]
+                )
+            ).sum()
+
+        if dim is not None:
+            return partial(f, h, n, dim)
+        return [partial(f, h, n, i) for i in range(dimensions)]
 
     @classmethod
     def backward(
