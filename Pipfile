@@ -11,6 +11,7 @@ scipy = "*"
 build = "*"
 twine = "*"
 pytest = "*"
+sphinx = "*"
 
 [requires]
 python_version = "3.11"
