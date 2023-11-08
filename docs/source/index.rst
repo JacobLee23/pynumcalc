@@ -1,20 +1,26 @@
-.. pynumcalc documentation master file, created by
-   sphinx-quickstart on Tue Nov  7 18:03:05 2023.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+pynumcalc Documentation
+=======================
 
-Welcome to pynumcalc's documentation!
-=====================================
+**pynumcalc**, a Python package for computing differential and integral calculus approximations.
+
+Features
+--------
+
+User Guide
+----------
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
+   user/install
+   user/quickstart
 
+API Reference
+-------------
 
-Indices and tables
-==================
+.. toctree::
+   :maxdepth: 1
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   pynumcalc/index
+   pynumcalc/differential
+   pynumcalc/integral
