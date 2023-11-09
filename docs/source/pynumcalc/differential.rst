@@ -7,42 +7,42 @@
 
 ====
 
-.. autoclass:: pynumcalc.differential.FiniteDifference
+.. autoclass:: FiniteDifference
 
     ****
 
-    .. automethod:: pynumcalc.differential.FiniteDifference.forward
-    .. automethod:: pynumcalc.differential.FiniteDifference.forward2
-    .. automethod:: pynumcalc.differential.FiniteDifference.forwardn
+    .. automethod:: forward
+    .. automethod:: forward2
+    .. automethod:: forwardn
 
     ****
 
-    .. automethod:: pynumcalc.differential.FiniteDifference.backward
-    .. automethod:: pynumcalc.differential.FiniteDifference.backward2
-    .. automethod:: pynumcalc.differential.FiniteDifference.backwardn
+    .. automethod:: backward
+    .. automethod:: backward2
+    .. automethod:: backwardn
 
     ****
 
-    .. automethod:: pynumcalc.differential.FiniteDifference.central
-    .. automethod:: pynumcalc.differential.FiniteDifference.central2
-    .. automethod:: pynumcalc.differential.FiniteDifference.centraln
+    .. automethod:: central
+    .. automethod:: central2
+    .. automethod:: centraln
 
     ****
 
-    .. automethod:: pynumcalc.differential.FiniteDifference.pforward
-    .. automethod:: pynumcalc.differential.FiniteDifference.pforward2
-    .. automethod:: pynumcalc.differential.FiniteDifference.pforwardn
+    .. automethod:: pforward
+    .. automethod:: pforward2
+    .. automethod:: pforwardn
 
     ****
 
-    .. automethod:: pynumcalc.differential.FiniteDifference.pbackward
-    .. automethod:: pynumcalc.differential.FiniteDifference.pbackward2
-    .. automethod:: pynumcalc.differential.FiniteDifference.pbackwardn
+    .. automethod:: pbackward
+    .. automethod:: pbackward2
+    .. automethod:: pbackwardn
 
 ====
 
-.. autoclass:: pynumcalc.differential.DifferenceQuotient
+.. autoclass:: DifferenceQuotient
 
-    .. automethod:: pynumcalc.differential.DifferenceQuotient.quotient
-    .. automethod:: pynumcalc.differential.DifferenceQuotient.quotient2
-    .. automethod:: pynumcalc.differential.DifferenceQuotient.quotientn
+    .. automethod:: quotient
+    .. automethod:: quotient2
+    .. automethod:: quotientn
