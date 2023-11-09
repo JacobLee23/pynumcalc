@@ -13,7 +13,7 @@ sys.path.insert(0, "..")
 project = 'pynumcalc'
 copyright = '2023, Jacob Lee'
 author = 'Jacob Lee'
-release = '0.0.0'
+release = '0.1.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
