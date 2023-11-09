@@ -2,3 +2,5 @@
 
 ``pynumcalc``
 =============
+
+.. automodule:: pynumcalc
