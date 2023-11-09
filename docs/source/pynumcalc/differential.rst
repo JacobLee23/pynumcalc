@@ -5,7 +5,7 @@
 
 .. automodule:: pynumcalc.differential
 
-****
+====
 
 .. autoclass:: pynumcalc.differential.FiniteDifference
 
@@ -33,11 +33,15 @@
     .. automethod:: pynumcalc.differential.FiniteDifference.pforward2
     .. automethod:: pynumcalc.differential.FiniteDifference.pforwardn
 
-****
+    ****
+
+    .. automethod:: pynumcalc.differential.FiniteDifference.pbackward
+    .. automethod:: pynumcalc.differential.FiniteDifference.pbackward2
+    .. automethod:: pynumcalc.differential.FiniteDifference.pbackwardn
+
+====
 
 .. autoclass:: pynumcalc.differential.DifferenceQuotient
-
-    ****
 
     .. automethod:: pynumcalc.differential.DifferenceQuotient.quotient
     .. automethod:: pynumcalc.differential.DifferenceQuotient.quotient2
