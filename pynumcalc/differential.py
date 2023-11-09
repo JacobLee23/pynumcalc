@@ -433,7 +433,7 @@ class FiniteDifference:
             """
             array = np.arange(0, n + 1)
             return lambda x: (
-                (-1) ** (n_ - array) * scipy.special.comb(n_, array) * f_(
+                (-1) ** array * scipy.special.comb(n_, array) * f_(
                     [*x[:dim_], x[dim_] - array * h_, *x[(dim_ + 1):]]
                 )
             ).sum()
