@@ -184,7 +184,7 @@ class FiniteDifference:
             r"""
             Computes the first-order partial forward finite difference of an :math:`n`-dimensional
             real-valued function (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`), ``f_``, using step
-            size ``h_`` with respect to the ``ndim_``th dimension of the domain of :math:`f`.
+            size ``h_`` with respect to the ``ndim_``\th dimension of the domain of :math:`f`.
             """
             return lambda x: f_([*x[:ndim_], x[ndim_] + h_, *x[(ndim_ + 1):]]) - f_(x)
 
@@ -231,7 +231,7 @@ class FiniteDifference:
             r"""
             Computes the second-order partial forward finite difference of an :math:`n`-dimensional
             real-valued function (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`), ``f_``, using step
-            size ``h_`` with respect to the ``ndim_``th dimension of the domain of :math:`f`.
+            size ``h_`` with respect to the ``ndim_``\th dimension of the domain of :math:`f`.
             """
             return lambda x: f_(
                 [*x[:dim_], x[dim_] + 2 * h_, *x[(dim_ + 1):]]
@@ -281,7 +281,7 @@ class FiniteDifference:
             Computes the ``n_``\th-order partial forward finite difference of an
             :math:`n`-dimensional real-valued function
             (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`), ``f_``, using step size ``h_`` with
-            respect to the ``ndim_``th dimension of the domain of :math:`f`.
+            respect to the ``ndim_``\th dimension of the domain of :math:`f`.
             """
             array = np.arange(0, n + 1)
             return lambda x: (
@@ -329,9 +329,9 @@ class FiniteDifference:
             f_: typing.Callable[[typing.Sequence[float]], float], h_: float, ndim_: int
         ) -> typing.Callable[[typing.Sequence[float]], float]:
             r"""
-            Computes the first-order partial forward finite difference of an :math:`n`-dimensional
+            Computes the first-order partial backward finite difference of an :math:`n`-dimensional
             real-valued function (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`), ``f_``, using step
-            size ``h_`` with respect to the ``ndim_``th dimension of the domain of :math:`f`.
+            size ``h_`` with respect to the ``ndim_``\th dimension of the domain of :math:`f`.
             """
             return lambda x: f_(x) - f([*x[:ndim_], x[ndim_] - h_, *x[(ndim_ + 1):]])
 
@@ -378,7 +378,7 @@ class FiniteDifference:
             r"""
             Computes the second-order partial backward finite difference of an :math:`n`-dimensional
             real-valued function (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`), ``f_``, using step
-            size ``h_`` with respect to the ``ndim_``th dimension of the domain of :math:`f`.
+            size ``h_`` with respect to the ``ndim_``\th dimension of the domain of :math:`f`.
             """
             return lambda x: f_(x) - 2 * f_(
                 [*x[:dim_], x[dim_] - h_, *x[(dim_ + 1):]]
@@ -396,7 +396,7 @@ class FiniteDifference:
         *, dim: int = None
     ) -> typing.Sequence[typing.Callable[[typing.Sequence[float]], float]]:
         r"""
-        Computes the ``n``\th-order partial forward finite differences of a ``dim``-dimensional
+        Computes the ``n``\th-order partial backward finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) using step size
         ``h``.
 
@@ -424,17 +424,169 @@ class FiniteDifference:
         def partial(
             f_: typing.Callable[[typing.Sequence[float]], float], h_: float, n_: int, dim_: int
         ) -> typing.Callable[[typing.Sequence[float]], float]:
-            """
-            :param f_:
-            :param h_:
-            :param h_:
-            :param dim_:
-            :return:
+            r"""
+            Computes the ``n``\th-order partial backward finite difference of an
+            :math:`n`-dimensional real-valued function
+            (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`), ``f_``, using step size ``h_`` with
+            respect to the ``ndim_``\th dimension of the domain of :math:`f`.
             """
             array = np.arange(0, n + 1)
             return lambda x: (
                 (-1) ** array * scipy.special.comb(n_, array) * f_(
                     [*x[:dim_], x[dim_] - array * h_, *x[(dim_ + 1):]]
+                )
+            ).sum()
+
+        if dim is not None:
+            return partial(f, h, n, dim)
+        return [partial(f, h, n, i) for i in range(dimensions)]
+    
+    @classmethod
+    def pcentral(
+        cls, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int,
+        *, ndim: typing.Optional[int] = None
+    ) -> typing.Sequence[typing.Callable[[typing.Sequence[float]], float]]:
+        r"""
+        Computes the first-order partial central finite differences of a ``dim``-dimensional
+        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) using step size
+        ``h``.
+
+        .. math::
+
+            {\delta}_{h}{[f]}(\vec{x}) = \begin{bmatrix}
+                {\delta}_{h}{[f]}_{{x}_{1}}(\vec{x}) \\
+                \vdots \\
+                {\delta}_{h}{[f]}_{{x}_{\dim{\vec{x}}}}(\vec{x}) \\
+            \end{bmatrix}
+
+        .. math::
+
+            {\nabla}_{h}{[f]}_{{x}_{i}}(\vec{x}) = f(
+                {x}_{1}, \dots, {x}_{i} + \frac{h}{2}, \dots, {x}_{\dim{\vec{x}}}
+            ) - f(
+                {x}_{1}, \dots, {x}_{i} - \frac{h}{2}, \dots, {x}_{\dim{\vec{x}}}
+            )
+
+        If ``ndim`` is not specified, returns a list of ``dim`` callable objects representing each of
+        the ``dim``-dimensional real-valued functions obtained when computing the finite difference
+        with respect to each of the ``dim`` dimensions in the domain of ``f``. If ``ndim`` is
+        specified, returns a single callable object representing the ``dim``-dimensional real-valued
+        function obtained when computing the finite difference with respect to the ``ndim``\th
+        dimension of the domain of ``f``.
+        """
+        def partial(
+            f_: typing.Callable[[typing.Sequence[float]], float], h_: float, ndim_: int
+        ) -> typing.Callable[[typing.Sequence[float]], float]:
+            r"""
+            Computes the first-order partial central finite difference of an :math:`n`-dimensional
+            real-valued function (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`), ``f_``, using step
+            size ``h_`` with respect to the ``ndim_``th dimension of the domain of :math:`f`.
+            """
+            return lambda x: f(
+                [*x[:ndim_], x[ndim_] + h_ / 2, *x[(ndim_ + 1):]]
+            ) - f(
+                [*x[:ndim_], x[ndim_] - h_ / 2, *x[(ndim_ + 1):]]
+            )
+
+        if ndim is not None:
+            return partial(f, h, ndim)
+        return [(partial(f, h, i)) for i in range(dim)]
+
+    @classmethod
+    def pcentral2(
+        cls, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int,
+        *, ndim: int = None
+    ) -> typing.Sequence[typing.Callable[[typing.Sequence[float]], float]]:
+        r"""
+        Computes the second-order partial central finite differences of a ``dim``-dimensional
+        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) using step size
+        ``h``.
+
+        .. math::
+
+            {\delta}_{h}{[f]}(\vec{x}) = \begin{bmatrix}
+                {\delta}_{h}{[f]}_{{x}_{1}}(\vec{x}) \\
+                \vdots \\
+                {\delta}_{h}{[f]}_{{x}_{\dim{\vec{x}}}}(\vec{x}) \\
+            \end{bmatrix}
+
+        .. math::
+
+            {\nabla}_{h}{[f]}_{{x}_{i}}(\vec{x}) = f(
+                {x}_{1}, \dots, {x}_{i} + h, \dots, {x}_{\dim{\vec{x}}}
+            ) - 2f(\vec{x}) + f(
+                {x}_{1}, \dots, {x}_{i} - h, \dots, {x}_{\dim{\vec{x}}}
+            )
+
+        If ``ndim`` is not specified, returns a list of ``dim`` callable objects representing each of
+        the ``dim``-dimensional real-valued functions obtained when computing the finite difference
+        with respect to each of the ``dim`` dimensions in the domain of ``f``. If ``ndim`` is
+        specified, returns a single callable object representing the ``dim``-dimensional real-valued
+        function obtained when computing the finite difference with respect to the ``ndim``\th
+        dimension of the domain of ``f``.
+        """
+        def partial(
+            f_: typing.Callable[[typing.Sequence[float]], float], h_: float, dim_: int
+        ) -> typing.Callable[[typing.Sequence[float]], float]:
+            r"""
+            Computes the second-order partial central finite difference of an :math:`n`-dimensional
+            real-valued function (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`), ``f_``, using step
+            size ``h_`` with respect to the ``ndim_``th dimension of the domain of :math:`f`.
+            """
+            return lambda x: f_(
+                [*x[:dim_], x[dim_] + h_, *x[(dim_ + 1):]]
+            ) - 2 * f_(x) + f_(
+                [*x[:dim_], x[dim_] - h_, *x[(dim_ + 1):]]
+            )
+
+        if ndim is not None:
+            return partial(f, h, ndim)
+        return [partial(f, h, i) for i in range(dim)]
+
+    @classmethod
+    def pcentraln(
+        cls, f: typing.Callable[[float], float], h: float, n: int, dimensions: int,
+        *, dim: int = None
+    ) -> typing.Sequence[typing.Callable[[typing.Sequence[float]], float]]:
+        r"""
+        Computes the ``n``\th-order partial central finite differences of a ``dim``-dimensional
+        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) using step size
+        ``h``.
+
+        .. math::
+
+            {\delta}_{h}{[f]}(\vec{x}) = \begin{bmatrix}
+                {\delta}_{h}{[f]}_{{x}_{1}}(\vec{x}) \\
+                \vdots \\
+                {\delta}_{h}{[f]}_{{x}_{\dim{\vec{x}}}}(\vec{x}) \\
+            \end{bmatrix}
+
+        .. math::
+
+            {\nabla}_{h}{[f]}_{{x}_{i}}(\vec{x}) = \sum_{i = 0}^{n} {(-1)}^{i} {{n}\choose{i}} f(
+                {x}_{1}, \dots, {x}_{i} + (\frac{n}{2} - i)h, \dots, {x}_{\dim{\vec{x}}}
+            )
+
+        If ``ndim`` is not specified, returns a list of ``dim`` callable objects representing each of
+        the ``dim``-dimensional real-valued functions obtained when computing the finite difference
+        with respect to each of the ``dim`` dimensions in the domain of ``f``. If ``ndim`` is
+        specified, returns a single callable object representing the ``dim``-dimensional real-valued
+        function obtained when computing the finite difference with respect to the ``ndim``\th
+        dimension of the domain of ``f``.
+        """
+        def partial(
+            f_: typing.Callable[[typing.Sequence[float]], float], h_: float, n_: int, dim_: int
+        ) -> typing.Callable[[typing.Sequence[float]], float]:
+            r"""
+            Computes the ``n``\th-order partial backward finite difference of an
+            :math:`n`-dimensional real-valued function
+            (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`), ``f_``, using step size ``h_`` with
+            respect to the ``ndim_``\th dimension of the domain of :math:`f`.
+            """
+            array = np.arange(0, n + 1)
+            return lambda x: (
+                (-1) ** array * scipy.special.comb(n_, array) * f_(
+                    [*x[:dim_], x[dim_] + (n_ / 2 - array) * h_, *x[(dim_ + 1):]]
                 )
             ).sum()
 

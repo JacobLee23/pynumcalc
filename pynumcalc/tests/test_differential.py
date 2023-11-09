@@ -440,6 +440,118 @@ class TestFiniteDifference:
                 assert fdiff1[ndim](x) == xfdiff1[ndim](x)
                 assert fdiff2[ndim](x) == xfdiff2[ndim](x)
 
+    @pytest.mark.parametrize(
+        ("f", "dim", "expected"), [
+            (lambda x: 0, 1, lambda h: [lambda x: 0]),
+            (lambda x: 0, 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: 0, 3, lambda h: [lambda x: 0, lambda x: 0, lambda x: 0]),
+
+            (lambda x: 1, 1, lambda h: [lambda x: 0]),
+            (lambda x: 1, 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: 1, 3, lambda h: [lambda x: 0, lambda x: 0, lambda x: 0]),
+
+            (lambda x: x[0], 1, lambda h: [lambda x: h]),
+            (lambda x: x[0], 2, lambda h: [lambda x: h, lambda x: 0]),
+            (lambda x: x[1], 2, lambda h: [lambda x: 0, lambda x: h]),
+            (lambda x: x[0] + x[1], 2, lambda h: [lambda x: h, lambda x: h]),
+            (lambda x: x[0] + x[1] + x[2], 3, lambda h: [lambda x: h, lambda x: h, lambda x: h]),
+
+            (lambda x: x[0] ** 2, 1, lambda h: [lambda x: 2 * x[0] * h]),
+            (lambda x: x[0] ** 2, 2, lambda h: [lambda x: 2 * x[0] * h, lambda x: 0]),
+            (lambda x: x[1] ** 2, 2, lambda h: [lambda x: 0, lambda x: 2 * x[1] * h]),
+            (lambda x: x[0] ** 2 + x[1] ** 2, 2, lambda h: [
+                lambda x: 2 * x[0] * h,
+                lambda x: 2 * x[1] * h
+            ]),
+            (lambda x: x[0] ** 2 + x[1] ** 2 + x[2] ** 2, 3, lambda h: [
+                lambda x: 2 * x[0] * h,
+                lambda x: 2 * x[1] * h,
+                lambda x: 2 * x[2] * h
+            ]),
+
+            (lambda x: x[0] * x[1], 2, lambda h: [lambda x: x[1] * h, lambda x: x[0] * h]),
+            (lambda x: (x[0] * x[1]) ** 2, 2, lambda h: [
+                lambda x: 2 * x[0] * x[1] ** 2 * h,
+                lambda x: 2 * x[0] ** 2 * x[1] * h
+            ]),
+            (lambda x: x[0] * x[1] * x[2], 3, lambda h: [
+                lambda x: x[1] * x[2] * h,
+                lambda x: x[0] * x[2] * h,
+                lambda x: x[0] * x[1] * h
+            ]),
+            (lambda x: (x[0] * x[1] * x[2]) ** 2, 3, lambda h: [
+                lambda x: 2 * (x[0] * x[1] * x[2]) * (x[1] * x[2] * h),
+                lambda x: 2 * (x[0] * x[1] * x[2]) * (x[0] * x[2] * h),
+                lambda x: 2 * (x[0] * x[1] * x[2]) * (x[0] * x[1] * h)
+            ])
+        ]
+    )
+    def test_pcentral(
+        self, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int,
+        expected: typing.Callable[
+            [float], typing.Sequence[typing.Callable[[typing.Sequence[float]], float]]
+        ]
+    ):
+        """
+        Unit tests for :py:`differential.FiniteDifference.pcentral`.
+        """
+        fdiff, xfdiff = differential.FiniteDifference.pcentral(f, h, dim), expected(h)
+
+        for ndim in range(dim):
+            for x in itertools.product(TEST_INTERVAL, repeat=dim):
+                assert fdiff[ndim](x) == xfdiff[ndim](x)
+
+    @pytest.mark.parametrize(
+        ("f", "dim"), [
+            (lambda x: 0, 1), (lambda x: 0, 2), (lambda x: 0, 3),
+            (lambda x: 1, 1), (lambda x: 1, 2), (lambda x: 1, 3),
+
+            (lambda x: x[0], 1), (lambda x: x[0], 2), (lambda x: x[0], 3),
+            (lambda x: x[0] + x[1], 2), (lambda x: x[0] + x[1] + x[2], 3)
+        ]
+    )
+    def test_pcentral2(
+        self, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int
+    ):
+        """
+        Unit tests for :py:`differential.FiniteDifference.pcentral2`.
+        """
+        fdiff = differential.FiniteDifference.pcentral2(f, h, dim)
+        xfdiff = [
+            differential.FiniteDifference.pcentral(partial, h, dim, ndim=dim)
+            for dim, partial in enumerate(differential.FiniteDifference.pcentral(f, h, dim))
+        ]
+
+        for ndim in range(dim):
+            for x in itertools.product(TEST_INTERVAL, repeat=dim):
+                assert fdiff[ndim](x) == xfdiff[ndim](x)
+
+    @pytest.mark.parametrize(
+        ("f", "dim"), [
+            (lambda x: 0, 1), (lambda x: 0, 2), (lambda x: 0, 3),
+            (lambda x: 1, 1), (lambda x: 1, 2), (lambda x: 1, 3),
+
+            (lambda x: x[0], 1), (lambda x: x[0], 2), (lambda x: x[0], 3),
+            (lambda x: x[0] + x[1], 2), (lambda x: x[0] + x[1] + x[2], 3)
+        ]
+    )
+    def test_pcentraln(
+        self, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int
+    ):
+        """
+        Unit test for :py:`differential.FiniteDifference.pcentraln`.
+        """
+        fdiff1 = differential.FiniteDifference.pcentraln(f, h, 1, dim)
+        xfdiff1 = differential.FiniteDifference.pcentral(f, h, dim)
+
+        fdiff2 = differential.FiniteDifference.pcentraln(f, h, 2, dim)
+        xfdiff2 = differential.FiniteDifference.pcentral2(f, h, dim)
+
+        for ndim in range(dim):
+            for x in itertools.product(TEST_INTERVAL, repeat=dim):
+                assert fdiff1[ndim](x) == xfdiff1[ndim](x)
+                assert fdiff2[ndim](x) == xfdiff2[ndim](x)
+
 
 @pytest.mark.parametrize(
     "h", [2 ** n for n in range(0, -10, -1)]
