@@ -39,6 +39,12 @@
     .. automethod:: pbackward2
     .. automethod:: pbackwardn
 
+    ****
+
+    .. automethod:: pcentral
+    .. automethod:: pcentral2
+    .. automethod:: pcentraln
+
 ====
 
 .. autoclass:: DifferenceQuotient
