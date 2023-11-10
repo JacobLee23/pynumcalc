@@ -655,3 +655,75 @@ class DifferenceQuotient:
                 fdiff = FiniteDifference.backwardn(f, h, n)
 
         return lambda x: fdiff(x) / (h ** n)
+    
+    @classmethod
+    def pquotient(
+        cls, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int,
+        *, ndim: int = None
+    ) -> typing.Sequence[typing.Callable[[float], float]]:
+        """
+        """
+        def partial(
+            fdiff_: typing.Callable[[typing.Sequence[float]], float], h_: float
+        ) -> typing.Callable[[typing.Sequence[float]], float]:
+            """
+            """
+            return lambda x: fdiff_(x) / h_
+        
+        try:
+            fdiff = FiniteDifference.pcentral(f, h, dim, ndim=ndim)
+        except ValueError:
+            try:
+                fdiff = FiniteDifference.pforward(f, h, dim, ndim=ndim)
+            except ValueError:
+                fdiff = FiniteDifference.pbackward(f, h, dim, ndim=ndim)
+
+        if ndim is not None:
+            return partial(fdiff, h)
+        return [partial(diff, h) for diff in fdiff]
+    
+    @classmethod
+    def pquotient2(
+        cls, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int
+    ) -> typing.Sequence[typing.Callable[[float], float]]:
+        """
+        """
+        def partial(
+            fdiff_: typing.Callable[[typing.Sequence[float]], float], h_: float
+        ) -> typing.Callable[[typing.Sequence[float]], float]:
+            """
+            """
+            return lambda x: fdiff_(x) / (h_ ** 2)
+        
+        try:
+            fdiff = FiniteDifference.pcentral2(f, h, dim)
+        except ValueError:
+            try:
+                fdiff = FiniteDifference.pforward2(f, h, dim)
+            except ValueError:
+                fdiff = FiniteDifference.pbackward2(f, h, dim)
+
+        return [partial(diff, h) for diff in fdiff]
+    
+    @classmethod
+    def pquotientn(
+        cls, f: typing.Callable[[typing.Sequence[float]], float], h: float, n: int, dim: int
+    ) -> typing.Sequence[typing.Callable[[float], float]]:
+        """
+        """
+        def partial(
+            fdiff_: typing.Callable[[typing.Sequence[float]], float], h_: float, n_: int
+        ) -> typing.Callable[[typing.Sequence[float]], float]:
+            """
+            """
+            return lambda x: fdiff_(x) / (h_ ** n_)
+        
+        try:
+            fdiff = FiniteDifference.pcentraln(f, h, n, dim)
+        except ValueError:
+            try:
+                fdiff = FiniteDifference.pforwardn(f, h, n, dim)
+            except ValueError:
+                fdiff = FiniteDifference.pbackwardn(f, h, n, dim)
+
+        return [partial(diff, h, n) for diff in fdiff]

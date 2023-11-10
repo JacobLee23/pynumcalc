@@ -49,6 +49,14 @@
 
 .. autoclass:: DifferenceQuotient
 
+    ****
+
     .. automethod:: quotient
     .. automethod:: quotient2
     .. automethod:: quotientn
+
+    ****
+
+    .. automethod:: pquotient
+    .. automethod:: pquotient2
+    .. automethod:: pquotientn

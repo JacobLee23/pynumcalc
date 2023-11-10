@@ -294,8 +294,8 @@ class TestFiniteDifference:
         """
         fdiff = differential.FiniteDifference.pforward2(f, h, dim)
         xfdiff = [
-            differential.FiniteDifference.pforward(partial, h, dim, ndim=dim)
-            for dim, partial in enumerate(differential.FiniteDifference.pforward(f, h, dim))
+            differential.FiniteDifference.pforward(partial, h, dim, ndim=ndim)
+            for ndim, partial in enumerate(differential.FiniteDifference.pforward(f, h, dim))
         ]
 
         for ndim in range(dim):
@@ -406,8 +406,8 @@ class TestFiniteDifference:
         """
         fdiff = differential.FiniteDifference.pbackward2(f, h, dim)
         xfdiff = [
-            differential.FiniteDifference.pbackward(partial, h, dim, ndim=dim)
-            for dim, partial in enumerate(differential.FiniteDifference.pbackward(f, h, dim))
+            differential.FiniteDifference.pbackward(partial, h, dim, ndim=ndim)
+            for ndim, partial in enumerate(differential.FiniteDifference.pbackward(f, h, dim))
         ]
 
         for ndim in range(dim):
@@ -518,8 +518,8 @@ class TestFiniteDifference:
         """
         fdiff = differential.FiniteDifference.pcentral2(f, h, dim)
         xfdiff = [
-            differential.FiniteDifference.pcentral(partial, h, dim, ndim=dim)
-            for dim, partial in enumerate(differential.FiniteDifference.pcentral(f, h, dim))
+            differential.FiniteDifference.pcentral(partial, h, dim, ndim=ndim)
+            for ndim, partial in enumerate(differential.FiniteDifference.pcentral(f, h, dim))
         ]
 
         for ndim in range(dim):
@@ -595,7 +595,7 @@ class TestDifferenceQuotient:
     )
     def test_quotient2(self, f: typing.Callable[[float], float], h: float):
         """
-        Unit test for :py:meth:`differential.DifferenceQuotient.quotient`.
+        Unit test for :py:meth:`differential.DifferenceQuotient.quotient2`.
         """
         dquot = differential.DifferenceQuotient.quotient2(f, h)
         xdquot = differential.DifferenceQuotient.quotient(
@@ -613,7 +613,7 @@ class TestDifferenceQuotient:
     )
     def test_quotientn(self, f: typing.Callable[[float], float], h: float):
         """
-        Unit test for :py:meth:`differential.DifferenceQuotient.quotient`.
+        Unit test for :py:meth:`differential.DifferenceQuotient.quotientn`.
         """
         dquot1 = differential.DifferenceQuotient.quotientn(f, h, 1)
         xdquot1 = differential.DifferenceQuotient.quotient(f, h)
@@ -624,3 +624,109 @@ class TestDifferenceQuotient:
         for x in TEST_INTERVAL:
             assert dquot1(x) == xdquot1(x)
             assert dquot2(x) == xdquot2(x)
+
+    @pytest.mark.parametrize(
+        ("f", "dim", "expected"), [
+            (lambda x: 0, 1, lambda h: [lambda x: 0]),
+            (lambda x: 0, 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: 0, 3, lambda h: [lambda x: 0, lambda x: 0, lambda x: 0]),
+
+            (lambda x: 1, 1, lambda h: [lambda x: 0]),
+            (lambda x: 1, 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: 1, 3, lambda h: [lambda x: 0, lambda x: 0, lambda x: 0]),
+
+            (lambda x: x[0], 1, lambda h: [lambda x: 1]),
+            (lambda x: x[0], 2, lambda h: [lambda x: 1, lambda x: 0]),
+            (lambda x: x[1], 2, lambda h: [lambda x: 0, lambda x: 1]),
+            (lambda x: x[0] + x[1], 2, lambda h: [lambda x: 1, lambda x: 1]),
+            (lambda x: x[0] + x[1] + x[2], 3, lambda h: [lambda x: 1, lambda x: 1, lambda x: 1]),
+
+            (lambda x: x[0] ** 2, 1, lambda h: [lambda x: 2 * x[0]]),
+            (lambda x: x[0] ** 2, 2, lambda h: [lambda x: 2 * x[0], lambda x: 0]),
+            (lambda x: x[1] ** 2, 2, lambda h: [lambda x: 0, lambda x: 2 * x[1]]),
+            (lambda x: x[0] ** 2 + x[1] ** 2, 2, lambda h: [
+                lambda x: 2 * x[0],
+                lambda x: 2 * x[1]
+            ]),
+            (lambda x: x[0] ** 2 + x[1] ** 2 + x[2] ** 2, 3, lambda h: [
+                lambda x: 2 * x[0],
+                lambda x: 2 * x[1],
+                lambda x: 2 * x[2]
+            ]),
+
+            (lambda x: x[0] * x[1], 2, lambda h: [lambda x: x[1], lambda x: x[0]]),
+            (lambda x: (x[0] * x[1]) ** 2, 2, lambda h: [
+                lambda x: 2 * x[0] * x[1] ** 2,
+                lambda x: 2 * x[0] ** 2 * x[1]
+            ]),
+            (lambda x: x[0] * x[1] * x[2], 3, lambda h: [
+                lambda x: x[1] * x[2],
+                lambda x: x[0] * x[2],
+                lambda x: x[0] * x[1]
+            ]),
+            (lambda x: (x[0] * x[1] * x[2]) ** 2, 3, lambda h: [
+                lambda x: 2 * (x[0] * x[1] * x[2]) * (x[1] * x[2]),
+                lambda x: 2 * (x[0] * x[1] * x[2]) * (x[0] * x[2]),
+                lambda x: 2 * (x[0] * x[1] * x[2]) * (x[0] * x[1])
+            ])
+        ]
+    )
+    def test_pquotient(
+        self, f: typing.Callable[[float], float], h: float, dim: int,
+        expected: typing.Callable[[float], typing.Callable[[float], float]]
+    ):
+        """
+        Unit test for :py:meth:`differential.DifferenceQuotient.pquotient`.
+        """
+        dquot, xdquot = differential.DifferenceQuotient.pquotient(f, h, dim), expected(h)
+
+        for ndim in range(dim):
+            for x in itertools.product(TEST_INTERVAL, repeat=dim):
+                assert dquot[ndim](x) == xdquot[ndim](x)
+
+    @pytest.mark.parametrize(
+        ("f", "dim"), [
+            (lambda x: 0, 1), (lambda x: 0, 2), (lambda x: 0, 3),
+            (lambda x: 1, 1), (lambda x: 1, 2), (lambda x: 1, 3),
+
+            (lambda x: x[0], 1), (lambda x: x[0], 2), (lambda x: x[0], 3),
+            (lambda x: x[0] + x[1], 2), (lambda x: x[0] + x[1] + x[2], 3)
+        ]
+    )
+    def test_quotient2(self, f: typing.Callable[[float], float], h: float, dim: int):
+        """
+        Unit test for :py:meth:`differential.DifferenceQuotient.pquotient2`.
+        """
+        dquot = differential.DifferenceQuotient.pquotient2(f, h, dim)
+        xdquot = [
+            differential.DifferenceQuotient.pquotient(partial, h, dim, ndim=ndim)
+            for ndim, partial in enumerate(differential.DifferenceQuotient.pquotient(f, h, dim))
+        ]
+
+        for ndim in range(dim):
+            for x in itertools.product(TEST_INTERVAL, repeat=dim):
+                assert dquot[ndim](x) == xdquot[ndim](x)
+
+    @pytest.mark.parametrize(
+        ("f", "dim"), [
+            (lambda x: 0, 1), (lambda x: 0, 2), (lambda x: 0, 3),
+            (lambda x: 1, 1), (lambda x: 1, 2), (lambda x: 1, 3),
+
+            (lambda x: x[0], 1), (lambda x: x[0], 2), (lambda x: x[0], 3),
+            (lambda x: x[0] + x[1], 2), (lambda x: x[0] + x[1] + x[2], 3)
+        ]
+    )
+    def test_pquotientn(self, f: typing.Callable[[float], float], h: float, dim: int):
+        """
+        Unit test for :py:meth:`differential.DifferenceQuotient.pquotientn`.
+        """
+        dquot1 = differential.DifferenceQuotient.pquotientn(f, h, 1, dim)
+        xdquot1 = differential.DifferenceQuotient.pquotient(f, h, dim)
+
+        dquot2 = differential.DifferenceQuotient.pquotientn(f, h, 2, dim)
+        xdquot2 = differential.DifferenceQuotient.pquotient2(f, h, dim)
+
+        for ndim in range(dim):
+            for x in itertools.product(TEST_INTERVAL, repeat=dim):
+                assert dquot1[ndim](x) == xdquot1[ndim](x)
+                assert dquot2[ndim](x) == xdquot2[ndim](x)
