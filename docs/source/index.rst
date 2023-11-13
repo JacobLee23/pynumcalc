@@ -24,3 +24,4 @@ API Reference
    pynumcalc/index
    pynumcalc/differential
    pynumcalc/integral
+   pynumcalc/typedef

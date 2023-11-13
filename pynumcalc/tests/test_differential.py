@@ -5,6 +5,7 @@ Unit tests for :py:mod:`pynumcalc.differential`.
 import itertools
 import typing
 
+import numpy as np
 import pytest
 
 from pynumcalc import differential
@@ -216,6 +217,14 @@ class TestFiniteDifference:
             assert fdiff1(x) == xfdiff1(x)
             assert fdiff2(x) == xfdiff2(x)
 
+
+@pytest.mark.parametrize(
+    "h", [2 ** n for n in range(0, -10, -1)]
+)
+class TestPFiniteDifference:
+    """
+    Unit tests for :py:class:`differential.PFiniteDifference`.
+    """
     @pytest.mark.parametrize(
         ("f", "dim", "expected"), [
             (lambda x: 0, 1, lambda h: [lambda x: 0]),
@@ -269,13 +278,13 @@ class TestFiniteDifference:
         ]
     ):
         """
-        Unit tests for :py:`differential.FiniteDifference.pforward`.
+        Unit tests for :py:`differential.PFiniteDifference.pforward`.
         """
-        fdiff, xfdiff = differential.FiniteDifference.pforward(f, h, dim), expected(h)
+        fdiff, xfdiff = differential.PFiniteDifference.pforward(f, h, dim), expected(h)
 
         for ndim in range(dim):
             for x in itertools.product(TEST_INTERVAL, repeat=dim):
-                assert fdiff[ndim](x) == xfdiff[ndim](x)
+                assert fdiff(x, ndim=ndim) == xfdiff[ndim](x)
 
     @pytest.mark.parametrize(
         ("f", "dim"), [
@@ -290,17 +299,16 @@ class TestFiniteDifference:
         self, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int
     ):
         """
-        Unit tests for :py:`differential.FiniteDifference.pforward2`.
+        Unit tests for :py:`differential.PFiniteDifference.pforward2`.
         """
-        fdiff = differential.FiniteDifference.pforward2(f, h, dim)
-        xfdiff = [
-            differential.FiniteDifference.pforward(partial, h, dim, ndim=ndim)
-            for ndim, partial in enumerate(differential.FiniteDifference.pforward(f, h, dim))
-        ]
+        fdiff = differential.PFiniteDifference.pforward2(f, h, dim)
 
         for ndim in range(dim):
             for x in itertools.product(TEST_INTERVAL, repeat=dim):
-                assert fdiff[ndim](x) == xfdiff[ndim](x)
+                xfdiff = differential.PFiniteDifference.pforward(
+                    lambda x_: differential.PFiniteDifference.pforward(f, h, dim)(x_, ndim=ndim), h, dim
+                )
+                assert fdiff(x, ndim=ndim) == xfdiff(x, ndim=ndim)
 
     @pytest.mark.parametrize(
         ("f", "dim"), [
@@ -315,18 +323,18 @@ class TestFiniteDifference:
         self, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int
     ):
         """
-        Unit test for :py:`differential.FiniteDifference.pforwardn`.
+        Unit test for :py:`differential.PFiniteDifference.pforwardn`.
         """
-        fdiff1 = differential.FiniteDifference.pforwardn(f, h, 1, dim)
-        xfdiff1 = differential.FiniteDifference.pforward(f, h, dim)
+        fdiff1 = differential.PFiniteDifference.pforwardn(f, h, dim, 1)
+        xfdiff1 = differential.PFiniteDifference.pforward(f, h, dim)
 
-        fdiff2 = differential.FiniteDifference.pforwardn(f, h, 2, dim)
-        xfdiff2 = differential.FiniteDifference.pforward2(f, h, dim)
+        fdiff2 = differential.PFiniteDifference.pforwardn(f, h, dim, 2)
+        xfdiff2 = differential.PFiniteDifference.pforward2(f, h, dim)
 
         for ndim in range(dim):
             for x in itertools.product(TEST_INTERVAL, repeat=dim):
-                assert fdiff1[ndim](x) == xfdiff1[ndim](x)
-                assert fdiff2[ndim](x) == xfdiff2[ndim](x)
+                assert fdiff1(x, ndim=ndim) == xfdiff1(x, ndim=ndim)
+                assert fdiff2(x, ndim=ndim) == xfdiff2(x, ndim=ndim)
 
     @pytest.mark.parametrize(
         ("f", "dim", "expected"), [
@@ -381,13 +389,13 @@ class TestFiniteDifference:
         ]
     ):
         """
-        Unit tests for :py:`differential.FiniteDifference.pbackward`.
+        Unit test for :py:`differential.PFiniteDifference.pbackward`.
         """
-        fdiff, xfdiff = differential.FiniteDifference.pbackward(f, h, dim), expected(h)
+        fdiff, xfdiff = differential.PFiniteDifference.pbackward(f, h, dim), expected(h)
 
         for ndim in range(dim):
             for x in itertools.product(TEST_INTERVAL, repeat=dim):
-                assert fdiff[ndim](x) == xfdiff[ndim](x)
+                assert fdiff(x, ndim=ndim) == xfdiff[ndim](x)
 
     @pytest.mark.parametrize(
         ("f", "dim"), [
@@ -402,17 +410,16 @@ class TestFiniteDifference:
         self, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int
     ):
         """
-        Unit tests for :py:`differential.FiniteDifference.pbackward2`.
+        Unit test for :py:`differential.PFiniteDifference.pbackward2`.
         """
-        fdiff = differential.FiniteDifference.pbackward2(f, h, dim)
-        xfdiff = [
-            differential.FiniteDifference.pbackward(partial, h, dim, ndim=ndim)
-            for ndim, partial in enumerate(differential.FiniteDifference.pbackward(f, h, dim))
-        ]
+        fdiff = differential.PFiniteDifference.pbackward2(f, h, dim)
 
         for ndim in range(dim):
             for x in itertools.product(TEST_INTERVAL, repeat=dim):
-                assert fdiff[ndim](x) == xfdiff[ndim](x)
+                xfdiff = differential.PFiniteDifference.pbackward(
+                    lambda x_: differential.PFiniteDifference.pbackward(f, h, dim)(x_, ndim=ndim), h, dim
+                )
+                assert fdiff(x, ndim=ndim) == xfdiff(x, ndim=ndim)
 
     @pytest.mark.parametrize(
         ("f", "dim"), [
@@ -427,18 +434,18 @@ class TestFiniteDifference:
         self, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int
     ):
         """
-        Unit test for :py:`differential.FiniteDifference.pbackwardn`.
+        Unit test for :py:`differential.PFiniteDifference.pbackwardn`.
         """
-        fdiff1 = differential.FiniteDifference.pbackwardn(f, h, 1, dim)
-        xfdiff1 = differential.FiniteDifference.pbackward(f, h, dim)
+        fdiff1 = differential.PFiniteDifference.pbackwardn(f, h, dim, 1)
+        xfdiff1 = differential.PFiniteDifference.pbackward(f, h, dim)
 
-        fdiff2 = differential.FiniteDifference.pbackwardn(f, h, 2, dim)
-        xfdiff2 = differential.FiniteDifference.pbackward2(f, h, dim)
+        fdiff2 = differential.PFiniteDifference.pbackwardn(f, h, dim, 2)
+        xfdiff2 = differential.PFiniteDifference.pbackward2(f, h, dim)
 
         for ndim in range(dim):
             for x in itertools.product(TEST_INTERVAL, repeat=dim):
-                assert fdiff1[ndim](x) == xfdiff1[ndim](x)
-                assert fdiff2[ndim](x) == xfdiff2[ndim](x)
+                assert fdiff1(x, ndim=ndim) == xfdiff1(x, ndim=ndim)
+                assert fdiff2(x, ndim=ndim) == xfdiff2(x, ndim=ndim)
 
     @pytest.mark.parametrize(
         ("f", "dim", "expected"), [
@@ -493,13 +500,13 @@ class TestFiniteDifference:
         ]
     ):
         """
-        Unit tests for :py:`differential.FiniteDifference.pcentral`.
+        Unit test for :py:`differential.PFiniteDifference.pcentral`.
         """
-        fdiff, xfdiff = differential.FiniteDifference.pcentral(f, h, dim), expected(h)
+        fdiff, xfdiff = differential.PFiniteDifference.pcentral(f, h, dim), expected(h)
 
         for ndim in range(dim):
             for x in itertools.product(TEST_INTERVAL, repeat=dim):
-                assert fdiff[ndim](x) == xfdiff[ndim](x)
+                assert fdiff(x, ndim=ndim) == xfdiff[ndim](x)
 
     @pytest.mark.parametrize(
         ("f", "dim"), [
@@ -514,17 +521,16 @@ class TestFiniteDifference:
         self, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int
     ):
         """
-        Unit tests for :py:`differential.FiniteDifference.pcentral2`.
+        Unit test for :py:`differential.PFiniteDifference.pcentral2`.
         """
-        fdiff = differential.FiniteDifference.pcentral2(f, h, dim)
-        xfdiff = [
-            differential.FiniteDifference.pcentral(partial, h, dim, ndim=ndim)
-            for ndim, partial in enumerate(differential.FiniteDifference.pcentral(f, h, dim))
-        ]
+        fdiff = differential.PFiniteDifference.pcentral2(f, h, dim)
 
         for ndim in range(dim):
             for x in itertools.product(TEST_INTERVAL, repeat=dim):
-                assert fdiff[ndim](x) == xfdiff[ndim](x)
+                xfdiff = differential.PFiniteDifference.pcentral(
+                    lambda x_: differential.PFiniteDifference.pcentral(f, h, dim)(x_, ndim=ndim), h, dim
+                )
+                assert fdiff(x, ndim=ndim) == xfdiff(x, ndim=ndim)
 
     @pytest.mark.parametrize(
         ("f", "dim"), [
@@ -541,16 +547,16 @@ class TestFiniteDifference:
         """
         Unit test for :py:`differential.FiniteDifference.pcentraln`.
         """
-        fdiff1 = differential.FiniteDifference.pcentraln(f, h, 1, dim)
-        xfdiff1 = differential.FiniteDifference.pcentral(f, h, dim)
+        fdiff1 = differential.PFiniteDifference.pcentraln(f, h, dim, 1)
+        xfdiff1 = differential.PFiniteDifference.pcentral(f, h, dim)
 
-        fdiff2 = differential.FiniteDifference.pcentraln(f, h, 2, dim)
-        xfdiff2 = differential.FiniteDifference.pcentral2(f, h, dim)
+        fdiff2 = differential.PFiniteDifference.pcentraln(f, h, dim, 2)
+        xfdiff2 = differential.PFiniteDifference.pcentral2(f, h, dim)
 
         for ndim in range(dim):
             for x in itertools.product(TEST_INTERVAL, repeat=dim):
-                assert fdiff1[ndim](x) == xfdiff1[ndim](x)
-                assert fdiff2[ndim](x) == xfdiff2[ndim](x)
+                assert fdiff1(x, ndim=ndim) == xfdiff1(x, ndim=ndim)
+                assert fdiff2(x, ndim=ndim) == xfdiff2(x, ndim=ndim)
 
 
 @pytest.mark.parametrize(
@@ -625,6 +631,14 @@ class TestDifferenceQuotient:
             assert dquot1(x) == xdquot1(x)
             assert dquot2(x) == xdquot2(x)
 
+
+@pytest.mark.parametrize(
+    "h", [2 ** n for n in range(0, -10, -1)]
+)
+class TestPDifferenceQuotient:
+    """
+    Unit tests for :py:class:`differential.PDifferenceQuotient`.
+    """
     @pytest.mark.parametrize(
         ("f", "dim", "expected"), [
             (lambda x: 0, 1, lambda h: [lambda x: 0]),
@@ -676,9 +690,9 @@ class TestDifferenceQuotient:
         expected: typing.Callable[[float], typing.Callable[[float], float]]
     ):
         """
-        Unit test for :py:meth:`differential.DifferenceQuotient.pquotient`.
+        Unit test for :py:meth:`differential.PDifferenceQuotient.pquotient`.
         """
-        dquot, xdquot = differential.DifferenceQuotient.pquotient(f, h, dim), expected(h)
+        dquot, xdquot = differential.PDifferenceQuotient.pquotient(f, h, dim), expected(h)
 
         for ndim in range(dim):
             for x in itertools.product(TEST_INTERVAL, repeat=dim):
@@ -695,12 +709,12 @@ class TestDifferenceQuotient:
     )
     def test_quotient2(self, f: typing.Callable[[float], float], h: float, dim: int):
         """
-        Unit test for :py:meth:`differential.DifferenceQuotient.pquotient2`.
+        Unit test for :py:meth:`differential.PDifferenceQuotient.pquotient2`.
         """
-        dquot = differential.DifferenceQuotient.pquotient2(f, h, dim)
+        dquot = differential.PDifferenceQuotient.pquotient2(f, h, dim)
         xdquot = [
-            differential.DifferenceQuotient.pquotient(partial, h, dim, ndim=ndim)
-            for ndim, partial in enumerate(differential.DifferenceQuotient.pquotient(f, h, dim))
+            differential.PDifferenceQuotient.pquotient(partial, h, dim, ndim=ndim)
+            for ndim, partial in enumerate(differential.PDifferenceQuotient.pquotient(f, h, dim))
         ]
 
         for ndim in range(dim):
@@ -718,13 +732,13 @@ class TestDifferenceQuotient:
     )
     def test_pquotientn(self, f: typing.Callable[[float], float], h: float, dim: int):
         """
-        Unit test for :py:meth:`differential.DifferenceQuotient.pquotientn`.
+        Unit test for :py:meth:`differential.PDifferenceQuotient.pquotientn`.
         """
-        dquot1 = differential.DifferenceQuotient.pquotientn(f, h, 1, dim)
-        xdquot1 = differential.DifferenceQuotient.pquotient(f, h, dim)
+        dquot1 = differential.PDifferenceQuotient.pquotientn(f, h, 1, dim)
+        xdquot1 = differential.PDifferenceQuotient.pquotient(f, h, dim)
 
-        dquot2 = differential.DifferenceQuotient.pquotientn(f, h, 2, dim)
-        xdquot2 = differential.DifferenceQuotient.pquotient2(f, h, dim)
+        dquot2 = differential.PDifferenceQuotient.pquotientn(f, h, 2, dim)
+        xdquot2 = differential.PDifferenceQuotient.pquotient2(f, h, dim)
 
         for ndim in range(dim):
             for x in itertools.product(TEST_INTERVAL, repeat=dim):
