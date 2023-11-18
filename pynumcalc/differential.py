@@ -19,120 +19,123 @@ class FiniteDifference:
     """
     @staticmethod
     @typedef.FiniteDifferenceC
-    def forward(f: typedef.RealFunction, h: float, x: typedef.DomainElement) -> typedef.RealFunction:
+    def forward(f: typedef.RealFunction, h: float, x: float) -> typedef.RealFunction:
         r"""
         Computes the first-order forward finite difference of a one-dimensional real-valued
-        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
 
         .. math::
 
-            {\Delta}_{h}[f](x) = f(x + h) - f(x)
+            {\Delta}_{h} [f](x) = f(x + h) - f(x)
         """
         return f(x + h) - f(x)
 
     @staticmethod
     @typedef.FiniteDifferenceC
-    def forward2(f: typedef.RealFunction, h: float, x: typedef.DomainElement) -> typedef.RealFunction:
+    def forward2(f: typedef.RealFunction, h: float, x: float) -> typedef.RealFunction:
         r"""
         Computes the second-order forward finite difference of a one-dimensional real-valued
-        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
 
         .. math::
 
-            {\Delta}_{h}^{2}[f](x) = f(x + 2h) - 2f(x + h) + f(x)
+            {\Delta}_{h}^{2} [f](x) = f(x + 2h) - 2f(x + h) + f(x)
         """
         return f(x + 2 * h) - 2 * f(x + h) + f(x)
 
     @staticmethod
     @typedef.FiniteDifferenceC
-    def forwardn(f: typedef.RealFunction, h: float, x: typedef.DomainElement, n: int) -> typedef.RealFunction:
+    def forwardn(f: typedef.RealFunction, h: float, x: float, n: int) -> typedef.RealFunction:
         r"""
         Computes the ``n``\th-order forward finite difference of a one-dimensional real-valued
-        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
 
         .. math::
 
-            {\Delta}_{h}^{n}[f](x) = \sum_{i = 0}^{n} {(-1)}^{n - i} {{n}\choose{i}} f(x + ih)
+            {\Delta}_{h}^{n} [f](x)
+            = \sum_{i = 0}^{n} {(-1)}^{n - i} {{n}\choose{i}} f(x + ih)
         """
         array = np.arange(0, n + 1)
         return ((-1) ** (n - array) * scipy.special.comb(n, array) * f(x + array * h)).sum()
 
     @staticmethod
     @typedef.FiniteDifferenceC
-    def backward(f: typedef.RealFunction, h: float, x: typedef.DomainElement) -> typedef.RealFunction:
+    def backward(f: typedef.RealFunction, h: float, x: float) -> typedef.RealFunction:
         r"""
         Computes the first-order backward finite difference of a one-dimensional real-valued
-        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
 
         .. math::
 
-            {\nabla}_{h}[f](x) = f(x) - f(x - h)
+            {\nabla}_{h} [f](x) = f(x) - f(x - h)
         """
         return f(x) - f(x - h)
 
     @staticmethod
     @typedef.FiniteDifferenceC
-    def backward2(f: typedef.RealFunction, h: float, x: typedef.DomainElement) -> typedef.RealFunction:
+    def backward2(f: typedef.RealFunction, h: float, x: float) -> typedef.RealFunction:
         r"""
         Computes the second-order backward finite difference of a one-dimensional real-valued
-        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
 
         .. math::
 
-            {\nabla}_{h}^{2}[f](x) = f(x) - 2f(x - h) + f(x - 2h)
+            {\nabla}_{h}^{2} [f](x) = f(x) - 2f(x - h) + f(x - 2h)
         """
         return f(x) - 2 * f(x - h) + f(x - 2 * h)
 
     @staticmethod
     @typedef.FiniteDifferenceC
-    def backwardn(f: typedef.RealFunction, h: float, x: typedef.DomainElement, n: int) -> typedef.RealFunction:
+    def backwardn(f: typedef.RealFunction, h: float, x: float, n: int) -> typedef.RealFunction:
         r"""
         Computes the ``n``\th-order backward finite difference of a one-dimensional real-valued
-        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
 
         .. math::
 
-            {\nabla}_{h}^{n}[f](x) = \sum_{i = 0}^{n} {(-1)}^{i} {{n}\choose{i}} f(x - ih)
+            {\nabla}_{h}^{n} [f](x)
+            = \sum_{i = 0}^{n} {(-1)}^{i} {{n}\choose{i}} f(x - ih)
         """
         array = np.arange(0, n + 1)
         return ((-1) ** array * scipy.special.comb(n, array) * f(x - array * h)).sum()
 
     @staticmethod
     @typedef.FiniteDifferenceC
-    def central(f: typedef.RealFunction, h: float, x: typedef.DomainElement) -> typedef.RealFunction:
+    def central(f: typedef.RealFunction, h: float, x: float) -> typedef.RealFunction:
         r"""
         Computes the first-order central finite difference of a one-dimensional real-valued
-        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
 
         .. math::
 
-            {\delta}_{h}[f](x) = f(x + \frac{h}{2}) - f(x - \frac{h}{2})
+            {\delta}_{h} [f](x) = f(x + \frac{h}{2}) - f(x - \frac{h}{2})
         """
         return f(x + h / 2) - f(x - h / 2)
 
     @staticmethod
     @typedef.FiniteDifferenceC
-    def central2(f: typedef.RealFunction, h: float, x: typedef.DomainElement) -> typedef.RealFunction:
+    def central2(f: typedef.RealFunction, h: float, x: float) -> typedef.RealFunction:
         r"""
         Computes the second-order central finite difference of a one-dimensional real-valued
-        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
 
         .. math::
 
-            {\delta}_{h}^{2}[f](x) = f(x + h) - 2f(x) + f(x - h)
+            {\delta}_{h}^{2} [f](x) = f(x + h) - 2f(x) + f(x - h)
         """
         return f(x + h) - 2 * f(x) + f(x - h)
 
     @staticmethod
     @typedef.FiniteDifferenceC
-    def centraln(f: typedef.RealFunction, h: float, x: typedef.DomainElement, n: int) -> typedef.RealFunction:
+    def centraln(f: typedef.RealFunction, h: float, x: float, n: int) -> typedef.RealFunction:
         r"""
         Computes the ``n``\th-order central finite difference of a one-dimensional real-valued
-        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
 
         .. math::
 
-            {\delta}_{h}^{n}[f](x) = \sum_{i = 0}^{n} {(-1)}^{i} {{n}\choose{i}} f(x + (\frac{n}{2} - i)h)
+            {\delta}_{h}^{n} [f](x)
+            = \sum_{i = 0}^{n} {(-1)}^{i} {{n}\choose{i}} f(x + (\frac{n}{2} - i)h)
         """
         array = np.arange(0, n + 1)
         return ((-1) ** array * scipy.special.comb(n, array) * f(x + (n / 2 - array) * h)).sum()
@@ -146,7 +149,8 @@ class PFiniteDifference(FiniteDifference):
 
         .. math::
 
-            {\Delta}_{h}{[f]}(\vec{x}) = \begin{bmatrix}
+            {\Delta}_{h}{[f]}(\vec{x})
+            = \begin{bmatrix}
                 {\Delta}_{h}{[f]}_{{x}_{1}}(\vec{x}) \\
                 \vdots \\
                 {\Delta}_{h}{[f]}_{{x}_{\dim{\vec{x}}}}(\vec{x}) \\
@@ -156,7 +160,8 @@ class PFiniteDifference(FiniteDifference):
 
         .. math::
 
-            {\nabla}_{h}{[f]}(\vec{x}) = \begin{bmatrix}
+            {\nabla}_{h}{[f]}(\vec{x})
+            = \begin{bmatrix}
                 {\nabla}_{h}{[f]}_{{x}_{1}}(\vec{x}) \\
                 \vdots \\
                 {\nabla}_{h}{[f]}_{{x}_{\dim{\vec{x}}}}(\vec{x}) \\
@@ -166,7 +171,8 @@ class PFiniteDifference(FiniteDifference):
 
         .. math::
 
-            {\delta}_{h}{[f]}(\vec{x}) = \begin{bmatrix}
+            {\delta}_{h}{[f]}(\vec{x})
+            = \begin{bmatrix}
                 {\delta}_{h}{[f]}_{{x}_{1}}(\vec{x}) \\
                 \vdots \\
                 {\delta}_{h}{[f]}_{{x}_{\dim{\vec{x}}}}(\vec{x}) \\
@@ -177,13 +183,14 @@ class PFiniteDifference(FiniteDifference):
     def pforward(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray) -> typedef.RealFunction:
         r"""
         Computes the first-order partial forward finite differences of a ``dim``-dimensional
-        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) using step size
-        ``h``.
+        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
+        step size ``h``.
 
         .. math::
 
-            {\Delta}_{h}{[f]}_{{x}_{i}}(\vec{x}) = f(
-                {x}_{1}, \dots, {x}_{i} + h, \dots, {x}_{\dim{\vec{x}}}
+            {\Delta}_{h} {[f]}_{{x}_{i}}(\vec{x})
+            = f(
+                \langle {x}_{1}, \dots, {x}_{i} + h, \dots, {x}_{\dim{\vec{x}}} \rangle
             ) - f(\vec{x})
         """
         return f([*x[:ndim], x[ndim] + h, *x[(ndim + 1):]]) - f(x)
@@ -193,15 +200,16 @@ class PFiniteDifference(FiniteDifference):
     def pforward2(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray) -> typedef.RealFunction:
         r"""
         Computes the second-order partial forward finite differences of a ``dim``-dimensional
-        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) using step size
-        ``h``.
+        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
+        step size ``h``.
 
         .. math::
 
-            {\Delta}_{h}{[f]}_{{x}_{i}}(\vec{x}) = f(
-                {x}_{1}, \dots, {x}_{i} + 2h, \dots, {x}_{\dim{\vec{x}}}
+            {\Delta}_{h}^{2} {[f]}_{{x}_{i}}(\vec{x})
+            = f(
+                \langle {x}_{1}, \dots, {x}_{i} + 2h, \dots, {x}_{\dim{\vec{x}}} \rangle
             ) - 2f(
-                {x}_{1}, \dots, {x}_{i} + h, \dots, {x}_{\dim{\vec{x}}}
+                \langle {x}_{1}, \dots, {x}_{i} + h, \dots, {x}_{\dim{\vec{x}}} \rangle
             ) + f(\vec{x})
         """
         return f(
@@ -215,13 +223,14 @@ class PFiniteDifference(FiniteDifference):
     def pforwardn(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray, n: int) -> typedef.RealFunction:
         r"""
         Computes the ``n``\th-order partial forward finite differences of a ``dim``-dimensional
-        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) using step size
-        ``h``.
+        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
+        step size ``h``.
 
         .. math::
 
-            {\Delta}_{h}{[f]}_{{x}_{i}}(\vec{x}) = \sum_{k = 0}^{n} {(-1)}^{n - k} {{n}\choose{k}} f(
-                {x}_{1}, \dots, {x}_{i} + kh, \dots, {x}_{\dim{\vec{x}}}
+            {\Delta}_{h}^{n} {[f]}_{{x}_{i}}(\vec{x})
+            = \sum_{k = 0}^{n} {(-1)}^{n - k} {{n}\choose{k}} f(
+                \langle {x}_{1}, \dots, {x}_{i} + kh, \dots, {x}_{\dim{\vec{x}}} \rangle
             )
         """
         array = np.arange(0, n + 1)
@@ -236,13 +245,14 @@ class PFiniteDifference(FiniteDifference):
     def pbackward(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray) -> typedef.RealFunction:
         r"""
         Computes the first-order partial backward finite differences of a ``dim``-dimensional
-        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) using step size
-        ``h``.
+        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
+        step size ``h``.
 
         .. math::
 
-            {\nabla}_{h}{[f]}_{{x}_{i}}(\vec{x}) = f(\vec{x}) - f(
-                {x}_{1}, \dots, {x}_{i} - h, \dots, {x}_{\dim{\vec{x}}}
+            {\nabla}_{h} {[f]}_{{x}_{i}}(\vec{x})
+            = f(\vec{x}) - f(
+                \langle {x}_{1}, \dots, {x}_{i} - h, \dots, {x}_{\dim{\vec{x}}} \rangle
             )
         """
         return f(x) - f([*x[:ndim], x[ndim] - h, *x[(ndim + 1):]])
@@ -252,15 +262,16 @@ class PFiniteDifference(FiniteDifference):
     def pbackward2(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray) -> typedef.RealFunction:
         r"""
         Computes the second-order partial backward finite differences of a ``dim``-dimensional
-        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) using step size
-        ``h``.
+        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
+        step size ``h``.
 
         .. math::
 
-            {\nabla}_{h}{[f]}_{{x}_{i}}(\vec{x}) = f(\vec{x}) - 2f(
-                {x}_{1}, \dots, {x}_{i} - h, \dots, {x}_{\dim{\vec{x}}}
+            {\nabla}_{h}^{2} {[f]}_{{x}_{i}}(\vec{x})
+            = f(\vec{x}) - 2f(
+                \langle {x}_{1}, \dots, {x}_{i} - h, \dots, {x}_{\dim{\vec{x}}} \rangle
             ) + f(
-                {x}_{1}, \dots, {x}_{i} - 2h, \dots, {x}_{\dim{\vec{x}}}
+                \langle {x}_{1}, \dots, {x}_{i} - 2h, \dots, {x}_{\dim{\vec{x}}} \rangle
             )
         """
         return f(x) - 2 * f(
@@ -274,13 +285,14 @@ class PFiniteDifference(FiniteDifference):
     def pbackwardn(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray, n: int) -> typedef.RealFunction:
         r"""
         Computes the ``n``\th-order partial backward finite differences of a ``dim``-dimensional
-        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) using step size
-        ``h``.
+        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
+        step size ``h``.
 
         .. math::
 
-            {\nabla}_{h}{[f]}_{{x}_{i}}(\vec{x}) = \sum_{k = 0}^{n} {(-1)}^{k} {{n}\choose{k}} f(
-                {x}_{1}, \dots, {x}_{i} - kh, \dots, {x}_{\dim{\vec{x}}}
+            {\nabla}_{h}^{n} {[f]}_{{x}_{i}}(\vec{x})
+            = \sum_{k = 0}^{n} {(-1)}^{k} {{n}\choose{k}} f(
+                \langle {x}_{1}, \dots, {x}_{i} - kh, \dots, {x}_{\dim{\vec{x}}} \rangle
             )
         """
         array = np.arange(0, n + 1)
@@ -295,15 +307,16 @@ class PFiniteDifference(FiniteDifference):
     def pcentral(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray) -> typedef.RealFunction:
         r"""
         Computes the first-order partial central finite differences of a ``dim``-dimensional
-        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) using step size
-        ``h``.
+        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
+        step size ``h``.
 
         .. math::
 
-            {\nabla}_{h}{[f]}_{{x}_{i}}(\vec{x}) = f(
-                {x}_{1}, \dots, {x}_{i} + \frac{h}{2}, \dots, {x}_{\dim{\vec{x}}}
+            {\nabla}_{h} {[f]}_{{x}_{i}}(\vec{x})
+            = f(
+                \langle {x}_{1}, \dots, {x}_{i} + \frac{h}{2}, \dots, {x}_{\dim{\vec{x}}} \rangle
             ) - f(
-                {x}_{1}, \dots, {x}_{i} - \frac{h}{2}, \dots, {x}_{\dim{\vec{x}}}
+                \langle {x}_{1}, \dots, {x}_{i} - \frac{h}{2}, \dots, {x}_{\dim{\vec{x}}} \rangle
             )
         """
         return f(
@@ -317,15 +330,16 @@ class PFiniteDifference(FiniteDifference):
     def pcentral2(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray) -> typedef.RealFunction:
         r"""
         Computes the second-order partial central finite differences of a ``dim``-dimensional
-        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) using step size
-        ``h``.
+        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
+        step size ``h``.
 
         .. math::
 
-            {\nabla}_{h}{[f]}_{{x}_{i}}(\vec{x}) = f(
-                {x}_{1}, \dots, {x}_{i} + h, \dots, {x}_{\dim{\vec{x}}}
+            {\nabla}_{h}^{2} {[f]}_{{x}_{i}}(\vec{x})
+            = f(
+                \langle {x}_{1}, \dots, {x}_{i} + h, \dots, {x}_{\dim{\vec{x}}} \rangle
             ) - 2f(\vec{x}) + f(
-                {x}_{1}, \dots, {x}_{i} - h, \dots, {x}_{\dim{\vec{x}}}
+                \langle {x}_{1}, \dots, {x}_{i} - h, \dots, {x}_{\dim{\vec{x}}} \rangle
             )
         """
         return f(
@@ -339,13 +353,16 @@ class PFiniteDifference(FiniteDifference):
     def pcentraln(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray, n: int) -> typedef.RealFunction:
         r"""
         Computes the ``n``\th-order partial central finite differences of a ``dim``-dimensional
-        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) using step size
-        ``h``.
+        real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
+        step size ``h``.
 
         .. math::
 
-            {\nabla}_{h}{[f]}_{{x}_{i}}(\vec{x}) = \sum_{k = 0}^{n} {(-1)}^{k} {{n}\choose{k}} f(
+            {\nabla}_{h}^{n} {[f]}_{{x}_{i}}(\vec{x})
+            = \sum_{k = 0}^{n} {(-1)}^{k} {{n}\choose{k}} f(
+                \langle
                 {x}_{1}, \dots, {x}_{i} + (\frac{n}{2} - k)h, \dots, {x}_{\dim{\vec{x}}}
+                \rangle
             )
         """
         array = np.arange(0, n + 1)
@@ -363,10 +380,7 @@ class DifferenceQuotient:
     def quotient(
         cls, f: typing.Callable[[float], float], h: float
     ) -> typing.Callable[[float], float]:
-        """
-        :param f:
-        :param h:
-        :return:
+        r"""
         """
         try:
             fdiff = FiniteDifference.central(f, h)
@@ -382,10 +396,7 @@ class DifferenceQuotient:
     def quotient2(
         cls, f: typing.Callable[[float], float], h: float
     ) -> typing.Callable[[float], float]:
-        """
-        :param f:
-        :param h:
-        :return:
+        r"""
         """
         try:
             fdiff = FiniteDifference.central2(f, h)
@@ -401,11 +412,7 @@ class DifferenceQuotient:
     def quotientn(
         cls, f: typing.Callable[[float], float], h: float, n: int
     ) -> typing.Callable[[float], float]:
-        """
-        :param f:
-        :param h:
-        :param n:
-        :return:
+        r"""
         """
         try:
             fdiff = FiniteDifference.centraln(f, h, n)
@@ -426,7 +433,7 @@ class PDifferenceQuotient:
         cls, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int,
         *, ndim: int = None
     ) -> typing.Sequence[typing.Callable[[float], float]]:
-        """
+        r"""
         """
         def partial(
             fdiff_: typing.Callable[[typing.Sequence[float]], float], h_: float
@@ -451,7 +458,7 @@ class PDifferenceQuotient:
     def pquotient2(
         cls, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int
     ) -> typing.Sequence[typing.Callable[[float], float]]:
-        """
+        r"""
         """
         def partial(
             fdiff_: typing.Callable[[typing.Sequence[float]], float], h_: float
@@ -474,7 +481,7 @@ class PDifferenceQuotient:
     def pquotientn(
         cls, f: typing.Callable[[typing.Sequence[float]], float], h: float, n: int, dim: int
     ) -> typing.Sequence[typing.Callable[[float], float]]:
-        """
+        r"""
         """
         def partial(
             fdiff_: typing.Callable[[typing.Sequence[float]], float], h_: float, n_: int
