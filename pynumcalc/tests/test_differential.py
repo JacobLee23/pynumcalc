@@ -314,28 +314,57 @@ class TestPFiniteDifference:
                 assert fdiff(x, ndim=ndim) == xfdiff[ndim](x)
 
     @pytest.mark.parametrize(
-        ("f", "dim"), [
-            (lambda x: 0, 1), (lambda x: 0, 2), (lambda x: 0, 3),
-            (lambda x: 1, 1), (lambda x: 1, 2), (lambda x: 1, 3),
+        ("f", "dim", "expected"), [
+            (lambda x: 0, 1, lambda h: [lambda x: 0]),
+            (lambda x: 0, 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: 0, 3, lambda h: [lambda x: 0, lambda x: 0, lambda x: 0]),
 
-            (lambda x: x[0], 1), (lambda x: x[0], 2), (lambda x: x[0], 3),
-            (lambda x: x[0] + x[1], 2), (lambda x: x[0] + x[1] + x[2], 3)
+            (lambda x: 1, 1, lambda h: [lambda x: 0]),
+            (lambda x: 1, 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: 1, 3, lambda h: [lambda x: 0, lambda x: 0, lambda x: 0]),
+
+            (lambda x: x[0], 1, lambda h: [lambda x: 0]),
+            (lambda x: x[0], 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: x[1], 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: x[0] + x[1], 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: x[0] + x[1] + x[2], 3, lambda h: [lambda x: 0, lambda x: 0, lambda x: 0]),
+
+            (lambda x: x[0] ** 2, 1, lambda h: [lambda x: 2 * h ** 2]),
+            (lambda x: x[0] ** 2, 2, lambda h: [lambda x: 2 * h ** 2, lambda x: 0]),
+            (lambda x: x[1] ** 2, 2, lambda h: [lambda x: 0, lambda x: 2 * h ** 2]),
+            (lambda x: x[0] ** 2 + x[1] ** 2, 2, lambda h: [
+                lambda x: 2 * h ** 2, lambda x: 2 * h ** 2
+            ]),
+            (lambda x: x[0] ** 2 + x[1] ** 2 + x[2] ** 2, 3, lambda h: [
+                lambda x: 2 * h ** 2, lambda x: 2 * h ** 2, lambda x: 2 * h ** 2
+            ]),
+
+            (lambda x: x[0] * x[1], 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: (x[0] * x[1]) ** 2, 2, lambda h: [
+                lambda x: 2 * (x[1] * h) ** 2, lambda x: 2 * (x[0] * h) ** 2
+            ]),
+            (lambda x: x[0] * x[1] * x[2], 3, lambda h: [lambda x: 0, lambda x: 0, lambda x: 0]),
+            (lambda x: (x[0] * x[1] * x[2]) ** 2, 3, lambda h: [
+                lambda x: 2 * (x[1] * x[2] * h) ** 2,
+                lambda x: 2 * (x[0] * x[2] * h) ** 2,
+                lambda x: 2 * (x[0] * x[1] * h) ** 2
+            ])
         ]
     )
     def test_pforward2(
-        self, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int
+        self, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int,
+        expected: typing.Callable[
+            [float], typing.Sequence[typing.Callable[[typing.Sequence[float]], float]]
+        ]
     ):
         """
         Unit tests for :py:`differential.PFiniteDifference.pforward2`.
         """
-        fdiff = differential.PFiniteDifference.pforward2(f, h, dim)
+        fdiff, xfdiff = differential.PFiniteDifference.pforward2(f, h, dim), expected(h)
 
         for ndim in range(dim):
             for x in itertools.product(TEST_INTERVAL, repeat=dim):
-                xfdiff = differential.PFiniteDifference.pforward(
-                    lambda x_: differential.PFiniteDifference.pforward(f, h, dim)(x_, ndim=ndim), h, dim
-                )
-                assert fdiff(x, ndim=ndim) == xfdiff(x, ndim=ndim)
+                assert fdiff(x, ndim=ndim) == xfdiff[ndim](x)
 
     @pytest.mark.parametrize(
         ("f", "dim"), [
@@ -425,28 +454,57 @@ class TestPFiniteDifference:
                 assert fdiff(x, ndim=ndim) == xfdiff[ndim](x)
 
     @pytest.mark.parametrize(
-        ("f", "dim"), [
-            (lambda x: 0, 1), (lambda x: 0, 2), (lambda x: 0, 3),
-            (lambda x: 1, 1), (lambda x: 1, 2), (lambda x: 1, 3),
+        ("f", "dim", "expected"), [
+            (lambda x: 0, 1, lambda h: [lambda x: 0]),
+            (lambda x: 0, 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: 0, 3, lambda h: [lambda x: 0, lambda x: 0, lambda x: 0]),
 
-            (lambda x: x[0], 1), (lambda x: x[0], 2), (lambda x: x[0], 3),
-            (lambda x: x[0] + x[1], 2), (lambda x: x[0] + x[1] + x[2], 3)
+            (lambda x: 1, 1, lambda h: [lambda x: 0]),
+            (lambda x: 1, 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: 1, 3, lambda h: [lambda x: 0, lambda x: 0, lambda x: 0]),
+
+            (lambda x: x[0], 1, lambda h: [lambda x: 0]),
+            (lambda x: x[0], 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: x[1], 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: x[0] + x[1], 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: x[0] + x[1] + x[2], 3, lambda h: [lambda x: 0, lambda x: 0, lambda x: 0]),
+
+            (lambda x: x[0] ** 2, 1, lambda h: [lambda x: 2 * h ** 2]),
+            (lambda x: x[0] ** 2, 2, lambda h: [lambda x: 2 * h ** 2, lambda x: 0]),
+            (lambda x: x[1] ** 2, 2, lambda h: [lambda x: 0, lambda x: 2 * h ** 2]),
+            (lambda x: x[0] ** 2 + x[1] ** 2, 2, lambda h: [
+                lambda x: 2 * h ** 2, lambda x: 2 * h ** 2
+            ]),
+            (lambda x: x[0] ** 2 + x[1] ** 2 + x[2] ** 2, 3, lambda h: [
+                lambda x: 2 * h ** 2, lambda x: 2 * h ** 2, lambda x: 2 * h ** 2
+            ]),
+
+            (lambda x: x[0] * x[1], 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: (x[0] * x[1]) ** 2, 2, lambda h: [
+                lambda x: 2 * (x[1] * h) ** 2, lambda x: 2 * (x[0] * h) ** 2
+            ]),
+            (lambda x: x[0] * x[1] * x[2], 3, lambda h: [lambda x: 0, lambda x: 0, lambda x: 0]),
+            (lambda x: (x[0] * x[1] * x[2]) ** 2, 3, lambda h: [
+                lambda x: 2 * (x[1] * x[2] * h) ** 2,
+                lambda x: 2 * (x[0] * x[2] * h) ** 2,
+                lambda x: 2 * (x[0] * x[1] * h) ** 2
+            ])
         ]
     )
     def test_pbackward2(
-        self, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int
+        self, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int,
+        expected: typing.Callable[
+            [float], typing.Sequence[typing.Callable[[typing.Sequence[float]], float]]
+        ]
     ):
         """
         Unit test for :py:`differential.PFiniteDifference.pbackward2`.
         """
-        fdiff = differential.PFiniteDifference.pbackward2(f, h, dim)
+        fdiff, xfdiff = differential.PFiniteDifference.pbackward2(f, h, dim), expected(h)
 
         for ndim in range(dim):
             for x in itertools.product(TEST_INTERVAL, repeat=dim):
-                xfdiff = differential.PFiniteDifference.pbackward(
-                    lambda x_: differential.PFiniteDifference.pbackward(f, h, dim)(x_, ndim=ndim), h, dim
-                )
-                assert fdiff(x, ndim=ndim) == xfdiff(x, ndim=ndim)
+                assert fdiff(x, ndim=ndim) == xfdiff[ndim](x)
 
     @pytest.mark.parametrize(
         ("f", "dim"), [
@@ -536,28 +594,57 @@ class TestPFiniteDifference:
                 assert fdiff(x, ndim=ndim) == xfdiff[ndim](x)
 
     @pytest.mark.parametrize(
-        ("f", "dim"), [
-            (lambda x: 0, 1), (lambda x: 0, 2), (lambda x: 0, 3),
-            (lambda x: 1, 1), (lambda x: 1, 2), (lambda x: 1, 3),
+        ("f", "dim", "expected"), [
+            (lambda x: 0, 1, lambda h: [lambda x: 0]),
+            (lambda x: 0, 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: 0, 3, lambda h: [lambda x: 0, lambda x: 0, lambda x: 0]),
 
-            (lambda x: x[0], 1), (lambda x: x[0], 2), (lambda x: x[0], 3),
-            (lambda x: x[0] + x[1], 2), (lambda x: x[0] + x[1] + x[2], 3)
+            (lambda x: 1, 1, lambda h: [lambda x: 0]),
+            (lambda x: 1, 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: 1, 3, lambda h: [lambda x: 0, lambda x: 0, lambda x: 0]),
+
+            (lambda x: x[0], 1, lambda h: [lambda x: 0]),
+            (lambda x: x[0], 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: x[1], 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: x[0] + x[1], 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: x[0] + x[1] + x[2], 3, lambda h: [lambda x: 0, lambda x: 0, lambda x: 0]),
+
+            (lambda x: x[0] ** 2, 1, lambda h: [lambda x: 2 * h ** 2]),
+            (lambda x: x[0] ** 2, 2, lambda h: [lambda x: 2 * h ** 2, lambda x: 0]),
+            (lambda x: x[1] ** 2, 2, lambda h: [lambda x: 0, lambda x: 2 * h ** 2]),
+            (lambda x: x[0] ** 2 + x[1] ** 2, 2, lambda h: [
+                lambda x: 2 * h ** 2, lambda x: 2 * h ** 2
+            ]),
+            (lambda x: x[0] ** 2 + x[1] ** 2 + x[2] ** 2, 3, lambda h: [
+                lambda x: 2 * h ** 2, lambda x: 2 * h ** 2, lambda x: 2 * h ** 2
+            ]),
+
+            (lambda x: x[0] * x[1], 2, lambda h: [lambda x: 0, lambda x: 0]),
+            (lambda x: (x[0] * x[1]) ** 2, 2, lambda h: [
+                lambda x: 2 * (x[1] * h) ** 2, lambda x: 2 * (x[0] * h) ** 2
+            ]),
+            (lambda x: x[0] * x[1] * x[2], 3, lambda h: [lambda x: 0, lambda x: 0, lambda x: 0]),
+            (lambda x: (x[0] * x[1] * x[2]) ** 2, 3, lambda h: [
+                lambda x: 2 * (x[1] * x[2] * h) ** 2,
+                lambda x: 2 * (x[0] * x[2] * h) ** 2,
+                lambda x: 2 * (x[0] * x[1] * h) ** 2
+            ])
         ]
     )
     def test_pcentral2(
-        self, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int
+        self, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int,
+        expected: typing.Callable[
+            [float], typing.Sequence[typing.Callable[[typing.Sequence[float]], float]]
+        ]
     ):
         """
         Unit test for :py:`differential.PFiniteDifference.pcentral2`.
         """
-        fdiff = differential.PFiniteDifference.pcentral2(f, h, dim)
+        fdiff, xfdiff = differential.PFiniteDifference.pcentral2(f, h, dim), expected(h)
 
         for ndim in range(dim):
             for x in itertools.product(TEST_INTERVAL, repeat=dim):
-                xfdiff = differential.PFiniteDifference.pcentral(
-                    lambda x_: differential.PFiniteDifference.pcentral(f, h, dim)(x_, ndim=ndim), h, dim
-                )
-                assert fdiff(x, ndim=ndim) == xfdiff(x, ndim=ndim)
+                assert fdiff(x, ndim=ndim) == xfdiff[ndim](x)
 
     @pytest.mark.parametrize(
         ("f", "dim"), [
