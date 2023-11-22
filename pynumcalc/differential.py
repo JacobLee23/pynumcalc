@@ -1,8 +1,6 @@
 """
 """
 
-import typing
-
 import numpy as np
 import scipy.special
 
@@ -180,7 +178,9 @@ class PFiniteDifference(FiniteDifference):
     """
     @staticmethod
     @typedef.PFiniteDifferenceC
-    def pforward(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray) -> typedef.RealFunction:
+    def pforward(
+        f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray
+    ) -> typedef.RealFunction:
         r"""
         Computes the first-order partial forward finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -197,7 +197,9 @@ class PFiniteDifference(FiniteDifference):
 
     @staticmethod
     @typedef.PFiniteDifferenceC
-    def pforward2(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray) -> typedef.RealFunction:
+    def pforward2(
+        f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray
+    ) -> typedef.RealFunction:
         r"""
         Computes the second-order partial forward finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -220,7 +222,9 @@ class PFiniteDifference(FiniteDifference):
 
     @staticmethod
     @typedef.PFiniteDifferenceC
-    def pforwardn(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray, n: int) -> typedef.RealFunction:
+    def pforwardn(
+        f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray, n: int
+    ) -> typedef.RealFunction:
         r"""
         Computes the ``n``\th-order partial forward finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -242,7 +246,9 @@ class PFiniteDifference(FiniteDifference):
 
     @staticmethod
     @typedef.PFiniteDifferenceC
-    def pbackward(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray) -> typedef.RealFunction:
+    def pbackward(
+        f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray
+    ) -> typedef.RealFunction:
         r"""
         Computes the first-order partial backward finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -259,7 +265,9 @@ class PFiniteDifference(FiniteDifference):
 
     @staticmethod
     @typedef.PFiniteDifferenceC
-    def pbackward2(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray) -> typedef.RealFunction:
+    def pbackward2(
+        f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray
+    ) -> typedef.RealFunction:
         r"""
         Computes the second-order partial backward finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -282,7 +290,9 @@ class PFiniteDifference(FiniteDifference):
 
     @staticmethod
     @typedef.PFiniteDifferenceC
-    def pbackwardn(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray, n: int) -> typedef.RealFunction:
+    def pbackwardn(
+        f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray, n: int
+    ) -> typedef.RealFunction:
         r"""
         Computes the ``n``\th-order partial backward finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -301,10 +311,12 @@ class PFiniteDifference(FiniteDifference):
                 [*x[:ndim], x[ndim] - array * h, *x[(ndim + 1):]]
             )
         ).sum()
-    
+
     @staticmethod
     @typedef.PFiniteDifferenceC
-    def pcentral(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray) -> typedef.RealFunction:
+    def pcentral(
+        f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray
+    ) -> typedef.RealFunction:
         r"""
         Computes the first-order partial central finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -312,7 +324,7 @@ class PFiniteDifference(FiniteDifference):
 
         .. math::
 
-            {\nabla}_{h} {[f]}_{{x}_{i}}(\vec{x})
+            {\delta}_{h} {[f]}_{{x}_{i}}(\vec{x})
             = f(
                 \langle {x}_{1}, \dots, {x}_{i} + \frac{h}{2}, \dots, {x}_{\dim{\vec{x}}} \rangle
             ) - f(
@@ -327,7 +339,9 @@ class PFiniteDifference(FiniteDifference):
 
     @staticmethod
     @typedef.PFiniteDifferenceC
-    def pcentral2(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray) -> typedef.RealFunction:
+    def pcentral2(
+        f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray
+    ) -> typedef.RealFunction:
         r"""
         Computes the second-order partial central finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -335,7 +349,7 @@ class PFiniteDifference(FiniteDifference):
 
         .. math::
 
-            {\nabla}_{h}^{2} {[f]}_{{x}_{i}}(\vec{x})
+            {\delta}_{h}^{2} {[f]}_{{x}_{i}}(\vec{x})
             = f(
                 \langle {x}_{1}, \dots, {x}_{i} + h, \dots, {x}_{\dim{\vec{x}}} \rangle
             ) - 2f(\vec{x}) + f(
@@ -350,7 +364,9 @@ class PFiniteDifference(FiniteDifference):
 
     @staticmethod
     @typedef.PFiniteDifferenceC
-    def pcentraln(f: typedef.RealFunction, h: float, ndim: int, x: np.ndarray, n: int) -> typedef.RealFunction:
+    def pcentraln(
+        f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray, n: int
+    ) -> typedef.RealFunction:
         r"""
         Computes the ``n``\th-order partial central finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -358,7 +374,7 @@ class PFiniteDifference(FiniteDifference):
 
         .. math::
 
-            {\nabla}_{h}^{n} {[f]}_{{x}_{i}}(\vec{x})
+            {\delta}_{h}^{n} {[f]}_{{x}_{i}}(\vec{x})
             = \sum_{k = 0}^{n} {(-1)}^{k} {{n}\choose{k}} f(
                 \langle
                 {x}_{1}, \dots, {x}_{i} + (\frac{n}{2} - k)h, \dots, {x}_{\dim{\vec{x}}}
@@ -375,12 +391,27 @@ class PFiniteDifference(FiniteDifference):
 
 class DifferenceQuotient:
     """
+    Computes difference quotients of one-dimensional real-valued functions.
     """
     @classmethod
-    def quotient(
-        cls, f: typing.Callable[[float], float], h: float
-    ) -> typing.Callable[[float], float]:
+    def quotient(cls, f: typedef.RealFunction, h: float) -> typedef.RealFunction:
         r"""
+        Computes the first-order difference quotient of a one-dimensional real-valued function
+        ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+
+        In order of precedence:
+
+        .. math::
+
+            f'(x)
+            \approx \frac{{\Delta}_{h} [f](x)}{h}
+            \approx \frac{{\nabla}_{h} [f](x)}{h}
+            \approx \frac{{\delta}_{h} [f](x)}{h}
+
+        See:
+            - :py:meth:`FiniteDifference.forward`
+            - :py:meth:`FiniteDifference.backward`
+            - :py:meth:`FiniteDifference.central`
         """
         try:
             fdiff = FiniteDifference.central(f, h)
@@ -393,10 +424,24 @@ class DifferenceQuotient:
         return lambda x: fdiff(x) / h
 
     @classmethod
-    def quotient2(
-        cls, f: typing.Callable[[float], float], h: float
-    ) -> typing.Callable[[float], float]:
+    def quotient2(cls, f: typedef.RealFunction, h: float) -> typedef.RealFunction:
         r"""
+        Computes the second-order difference quotient of a one-dimensional real-valued function
+        ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+
+        In order of precendence:
+
+        .. math::
+
+            f''(x)
+            \approx \frac{{\Delta}^{2}_{h} [f](x)}{h}
+            \approx \frac{{\nabla}^{2}_{h} [f](x)}{h}
+            \approx \frac{{\delta}^{2}_{h} [f](x)}{h}
+
+        See:
+            - :py:meth:`FiniteDifference.forward2`
+            - :py:meth:`FiniteDifference.backward2`
+            - :py:meth:`FiniteDifference.central2`
         """
         try:
             fdiff = FiniteDifference.central2(f, h)
@@ -409,10 +454,24 @@ class DifferenceQuotient:
         return lambda x: fdiff(x) / (h ** 2)
 
     @classmethod
-    def quotientn(
-        cls, f: typing.Callable[[float], float], h: float, n: int
-    ) -> typing.Callable[[float], float]:
+    def quotientn(cls, f: typedef.RealFunction, h: float, n: int) -> typedef.RealFunction:
         r"""
+        Computes the :math:`n`\th-order difference quotient of a one-dimensional real-valued
+        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+
+        In order of precedence:
+
+        .. math::
+
+            {f}^{(n)}(x)
+            \approx \frac{{\Delta}^{n}_{h} [f](x)}{h}
+            \approx \frac{{\nabla}^{n}_{h} [f](x)}{h}
+            \approx \frac{{\delta}^{n}_{h} [f](x)}{h}
+
+        See:
+            - :py:meth:`FiniteDifference.forwardn`
+            - :py:meth:`FiniteDifference.backwardn`
+            - :py:meth:`FiniteDifference.centraln`
         """
         try:
             fdiff = FiniteDifference.centraln(f, h, n)
@@ -427,46 +486,62 @@ class DifferenceQuotient:
 
 class PDifferenceQuotient:
     """
+    Computes partial difference quotients of :math:`n`-dimensional real-valued functions.
     """
     @classmethod
     def pquotient(
-        cls, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int,
-        *, ndim: int = None
-    ) -> typing.Sequence[typing.Callable[[float], float]]:
+        cls, f: typedef.RealFunctionN, h: float, dim: int, *, ndim: int = None
+    ) -> typedef.RealFunctionN:
         r"""
+        Computes the first-order partial difference quotients of a ``dim``-dimensional real-valued
+        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+
+        In order of precedence:
+
+        .. math::
+
+            f'(\vec{x})
+            \approx \frac{{\Delta}_{h} [f](\vec{x})}{h}
+            \approx \frac{{\nabla}_{h} [f](\vec{x})}{h}
+            \approx \frac{{\delta}_{h} [f](\vec{x})}{h}
+
+        See:
+            - :py:meth:`PFiniteDifference.pforward`
+            - :py:meth:`PFiniteDifference.pbackward`
+            - :py:meth:`PFiniteDifference.pcentral`
         """
-        def partial(
-            fdiff_: typing.Callable[[typing.Sequence[float]], float], h_: float
-        ) -> typing.Callable[[typing.Sequence[float]], float]:
-            """
-            """
-            return lambda x: fdiff_(x) / h_
-        
         try:
-            fdiff = PFiniteDifference.pcentral(f, h, dim, ndim=ndim)
+            fdiff = PFiniteDifference.pcentral(f, h, dim)
         except ValueError:
             try:
-                fdiff = PFiniteDifference.pforward(f, h, dim, ndim=ndim)
+                fdiff = PFiniteDifference.pforward(f, h, dim)
             except ValueError:
-                fdiff = PFiniteDifference.pbackward(f, h, dim, ndim=ndim)
+                fdiff = PFiniteDifference.pbackward(f, h, dim)
 
-        if ndim is not None:
-            return partial(fdiff, h)
-        return [partial(diff, h) for diff in fdiff]
-    
+        return lambda x: fdiff(x, ndim=ndim) / h
+
     @classmethod
     def pquotient2(
-        cls, f: typing.Callable[[typing.Sequence[float]], float], h: float, dim: int
-    ) -> typing.Sequence[typing.Callable[[float], float]]:
+        cls, f: typedef.RealFunctionN, h: float, dim: int, *, ndim: int = None
+    ) -> typedef.RealFunctionN:
         r"""
+        Computes the second-order partial difference quotients of a ``dim``-dimensional real-valued
+        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+
+        In order of precedence:
+
+        .. math::
+
+            f''(\vec{x})
+            \approx \frac{{\Delta}^{2}_{h} [f](\vec{x})}{h}
+            \approx \frac{{\nabla}^{2}_{h} [f](\vec{x})}{h}
+            \approx \frac{{\delta}^{2}_{h} [f](\vec{x})}{h}
+
+        See:
+            - :py:meth:`PFiniteDifference.pforward2`
+            - :py:meth:`PFiniteDifference.pbackward2`
+            - :py:meth:`PFiniteDifference.pcentral2`
         """
-        def partial(
-            fdiff_: typing.Callable[[typing.Sequence[float]], float], h_: float
-        ) -> typing.Callable[[typing.Sequence[float]], float]:
-            """
-            """
-            return lambda x: fdiff_(x) / (h_ ** 2)
-        
         try:
             fdiff = PFiniteDifference.pcentral2(f, h, dim)
         except ValueError:
@@ -475,27 +550,37 @@ class PDifferenceQuotient:
             except ValueError:
                 fdiff = PFiniteDifference.pbackward2(f, h, dim)
 
-        return [partial(diff, h) for diff in fdiff]
-    
+        return lambda x: fdiff(x, ndim=ndim) / (h ** 2)
+
     @classmethod
     def pquotientn(
-        cls, f: typing.Callable[[typing.Sequence[float]], float], h: float, n: int, dim: int
-    ) -> typing.Sequence[typing.Callable[[float], float]]:
+        cls, f: typedef.RealFunctionN, h: float, dim: int, n: int, *, ndim: int = None
+    ) -> typedef.RealFunctionN:
         r"""
+        Computes the :math:`n`\th-order partial difference quotients of a ``dim``-dimensional
+        real-valued function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size
+        ``h``.
+
+        In order of precedence:
+
+        .. math::
+
+            {f}^{(n)}(\vec{x})
+            \approx \frac{{\Delta}^{n}_{h} [f](\vec{x})}{h}
+            \approx \frac{{\nabla}^{n}_{h} [f](\vec{x})}{h}
+            \approx \frac{{\delta}^{n}_{h} [f](\vec{x})}{h}
+
+        See:
+            - :py:meth:`PFiniteDifference.pforwardn`
+            - :py:meth:`PFiniteDifference.pbackwardn`
+            - :py:meth:`PFiniteDifference.pcentraln`
         """
-        def partial(
-            fdiff_: typing.Callable[[typing.Sequence[float]], float], h_: float, n_: int
-        ) -> typing.Callable[[typing.Sequence[float]], float]:
-            """
-            """
-            return lambda x: fdiff_(x) / (h_ ** n_)
-        
         try:
-            fdiff = PFiniteDifference.pcentraln(f, h, n, dim)
+            fdiff = PFiniteDifference.pcentraln(f, h, dim, n)
         except ValueError:
             try:
-                fdiff = PFiniteDifference.pforwardn(f, h, n, dim)
+                fdiff = PFiniteDifference.pforwardn(f, h, dim, n)
             except ValueError:
-                fdiff = PFiniteDifference.pbackwardn(f, h, n, dim)
+                fdiff = PFiniteDifference.pbackwardn(f, h, dim, n)
 
-        return [partial(diff, h, n) for diff in fdiff]
+        return lambda x: fdiff(x, ndim=ndim) / (h ** n)

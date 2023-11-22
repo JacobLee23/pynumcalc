@@ -7,20 +7,18 @@ import typing
 import numpy as np
 
 
-DomainElement: typing.TypeAlias = typing.Union[float, np.ndarray]
-
-
 @typing.runtime_checkable
 class RealFunction(typing.Protocol):
     """
     """
-    @typing.overload
     def __call__(self, element: float) -> float: ...
 
-    @typing.overload
-    def __call__(self, element: np.ndarray) -> np.ndarray: ...
 
-    def __call__(self, element: DomainElement) -> DomainElement: ...
+@typing.runtime_checkable
+class RealFunctionN(typing.Protocol):
+    """
+    """
+    def __call__(self, element: np.ndarray) -> np.ndarray: ...
 
 
 class FiniteDifferenceC:
@@ -28,10 +26,14 @@ class FiniteDifferenceC:
     :param func:
     """
     @typing.overload
-    def __init__(self, func: typing.Callable[[RealFunction, float, DomainElement], RealFunction]): ...
+    def __init__(
+        self, func: typing.Callable[[RealFunction, float, float], RealFunction]
+    ): ...
 
     @typing.overload
-    def __init__(self, func: typing.Callable[[RealFunction, float, DomainElement, int], RealFunction]): ...
+    def __init__(
+        self, func: typing.Callable[[RealFunction, float, float, int], RealFunction]
+    ): ...
 
     def __init__(self, func: typing.Callable):
         self.func = func
@@ -51,27 +53,31 @@ class FiniteDifferenceC:
         :param n:
         :return:
         """
-        def fdiff(x: DomainElement) -> DomainElement:
+        def fdiff(x: float) -> float:
             """
             :param x:
             :return:
             """
             return self.func(f, h, x) if n is None else self.func(f, h, x, n)
-        
+
         fdiff.__doc__ = self.func.__doc__
 
         return fdiff
-    
+
 
 class PFiniteDifferenceC:
     """
     :param func:
     """
     @typing.overload
-    def __init__(self, func: typing.Callable[[RealFunction, float, int, np.ndarray], RealFunction]): ...
+    def __init__(
+        self, func: typing.Callable[[RealFunction, float, int, np.ndarray], RealFunction]
+    ): ...
 
     @typing.overload
-    def __init__(self, func: typing.Callable[[RealFunction, float, int, np.ndarray, int], RealFunction]): ...
+    def __init__(
+        self, func: typing.Callable[[RealFunction, float, int, np.ndarray, int], RealFunction]
+    ): ...
 
     def __init__(self, func: typing.Callable):
         self.func = func
@@ -79,12 +85,12 @@ class PFiniteDifferenceC:
         functools.update_wrapper(self, self.func)
 
     @typing.overload
-    def __call__(self, f: RealFunction, h: float, dim: int) -> typing.Sequence[RealFunction]: ...
+    def __call__(self, f: RealFunction, h: float, dim: int) -> RealFunctionN: ...
 
     @typing.overload
-    def __call__(self, f: RealFunction, h: float, dim: int, n: int) -> typing.Sequence[RealFunction]: ...
+    def __call__(self, f: RealFunction, h: float, dim: int, n: int) -> RealFunctionN: ...
 
-    def __call__(self, f: RealFunction, h: float, dim: int, n: int = None) -> typing.Sequence[RealFunction]:
+    def __call__(self, f: RealFunction, h: float, dim: int, n: int = None) -> RealFunctionN:
         """
         :param f:
         :param h:
@@ -105,14 +111,12 @@ class PFiniteDifferenceC:
             :return:
             :raise ValueError:
             """
-            if not isinstance(x, np.ndarray):
-                if len(x) != dim:
-                    raise ValueError
-                x = np.array(x)
-            else:
-                if x.shape != (dim,):
-                    raise ValueError
-            
+            x = np.array(x) if not isinstance(x, np.ndarray) else x
+            if x.shape != (dim,):
+                raise ValueError(
+                    f"Expected np.ndarray object of shape {(dim,)}, received {x.shape}"
+                )
+
             if ndim is not None:
                 return self.func(f, h, ndim, x) if n is None else self.func(f, h, ndim, x, n)
 
@@ -123,7 +127,7 @@ class PFiniteDifferenceC:
                     self.func(f, h, ndim, x, n) for ndim in range(dim)
                 ]
             )
-        
+
         fdiff.__doc__ = self.func.__doc__
 
         return fdiff
