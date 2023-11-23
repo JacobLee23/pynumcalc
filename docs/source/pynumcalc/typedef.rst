@@ -1,13 +1,14 @@
-.. _typedef:
+.. _pynumcalc.typedef:
 
 ``pynumcalc.typedef``
 =====================
 
 .. automodule:: pynumcalc.typedef
 
-.. autodata:: DomainElement
 
 .. autoclass:: RealFunction
+
+.. autoclass:: RealFunctionN
 
 .. autoclass:: FiniteDifferenceC
 
