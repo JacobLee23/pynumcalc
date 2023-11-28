@@ -17,7 +17,7 @@ class FiniteDifference:
     """
     @staticmethod
     @typedef.FiniteDifferenceC
-    def forward(f: typedef.RealFunction, h: float, x: float) -> typedef.RealFunction:
+    def forward(f: typedef.RealFunction, h: float, x: float) -> float:
         r"""
         Computes the first-order forward finite difference of a one-dimensional real-valued
         function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
@@ -30,7 +30,7 @@ class FiniteDifference:
 
     @staticmethod
     @typedef.FiniteDifferenceC
-    def forward2(f: typedef.RealFunction, h: float, x: float) -> typedef.RealFunction:
+    def forward2(f: typedef.RealFunction, h: float, x: float) -> float:
         r"""
         Computes the second-order forward finite difference of a one-dimensional real-valued
         function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
@@ -43,7 +43,7 @@ class FiniteDifference:
 
     @staticmethod
     @typedef.FiniteDifferenceC
-    def forwardn(f: typedef.RealFunction, h: float, x: float, n: int) -> typedef.RealFunction:
+    def forwardn(f: typedef.RealFunction, h: float, x: float, n: int) -> float:
         r"""
         Computes the ``n``\th-order forward finite difference of a one-dimensional real-valued
         function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
@@ -58,7 +58,7 @@ class FiniteDifference:
 
     @staticmethod
     @typedef.FiniteDifferenceC
-    def backward(f: typedef.RealFunction, h: float, x: float) -> typedef.RealFunction:
+    def backward(f: typedef.RealFunction, h: float, x: float) -> float:
         r"""
         Computes the first-order backward finite difference of a one-dimensional real-valued
         function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
@@ -71,7 +71,7 @@ class FiniteDifference:
 
     @staticmethod
     @typedef.FiniteDifferenceC
-    def backward2(f: typedef.RealFunction, h: float, x: float) -> typedef.RealFunction:
+    def backward2(f: typedef.RealFunction, h: float, x: float) -> float:
         r"""
         Computes the second-order backward finite difference of a one-dimensional real-valued
         function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
@@ -84,7 +84,7 @@ class FiniteDifference:
 
     @staticmethod
     @typedef.FiniteDifferenceC
-    def backwardn(f: typedef.RealFunction, h: float, x: float, n: int) -> typedef.RealFunction:
+    def backwardn(f: typedef.RealFunction, h: float, x: float, n: int) -> float:
         r"""
         Computes the ``n``\th-order backward finite difference of a one-dimensional real-valued
         function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
@@ -99,7 +99,7 @@ class FiniteDifference:
 
     @staticmethod
     @typedef.FiniteDifferenceC
-    def central(f: typedef.RealFunction, h: float, x: float) -> typedef.RealFunction:
+    def central(f: typedef.RealFunction, h: float, x: float) -> float:
         r"""
         Computes the first-order central finite difference of a one-dimensional real-valued
         function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
@@ -112,7 +112,7 @@ class FiniteDifference:
 
     @staticmethod
     @typedef.FiniteDifferenceC
-    def central2(f: typedef.RealFunction, h: float, x: float) -> typedef.RealFunction:
+    def central2(f: typedef.RealFunction, h: float, x: float) -> float:
         r"""
         Computes the second-order central finite difference of a one-dimensional real-valued
         function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
@@ -125,7 +125,7 @@ class FiniteDifference:
 
     @staticmethod
     @typedef.FiniteDifferenceC
-    def centraln(f: typedef.RealFunction, h: float, x: float, n: int) -> typedef.RealFunction:
+    def centraln(f: typedef.RealFunction, h: float, x: float, n: int) -> float:
         r"""
         Computes the ``n``\th-order central finite difference of a one-dimensional real-valued
         function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
@@ -178,9 +178,7 @@ class PFiniteDifference(FiniteDifference):
     """
     @staticmethod
     @typedef.PFiniteDifferenceC
-    def pforward(
-        f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray
-    ) -> typedef.RealFunction:
+    def pforward(f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray) -> np.ndarray:
         r"""
         Computes the first-order partial forward finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -197,9 +195,7 @@ class PFiniteDifference(FiniteDifference):
 
     @staticmethod
     @typedef.PFiniteDifferenceC
-    def pforward2(
-        f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray
-    ) -> typedef.RealFunction:
+    def pforward2(f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray) -> np.ndarray:
         r"""
         Computes the second-order partial forward finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -224,7 +220,7 @@ class PFiniteDifference(FiniteDifference):
     @typedef.PFiniteDifferenceC
     def pforwardn(
         f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray, n: int
-    ) -> typedef.RealFunction:
+    ) -> np.ndarray:
         r"""
         Computes the ``n``\th-order partial forward finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -246,9 +242,7 @@ class PFiniteDifference(FiniteDifference):
 
     @staticmethod
     @typedef.PFiniteDifferenceC
-    def pbackward(
-        f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray
-    ) -> typedef.RealFunction:
+    def pbackward(f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray) -> np.ndarray:
         r"""
         Computes the first-order partial backward finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -265,9 +259,7 @@ class PFiniteDifference(FiniteDifference):
 
     @staticmethod
     @typedef.PFiniteDifferenceC
-    def pbackward2(
-        f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray
-    ) -> typedef.RealFunction:
+    def pbackward2(f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray) -> np.ndarray:
         r"""
         Computes the second-order partial backward finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -292,7 +284,7 @@ class PFiniteDifference(FiniteDifference):
     @typedef.PFiniteDifferenceC
     def pbackwardn(
         f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray, n: int
-    ) -> typedef.RealFunction:
+    ) -> np.ndarray:
         r"""
         Computes the ``n``\th-order partial backward finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -314,9 +306,7 @@ class PFiniteDifference(FiniteDifference):
 
     @staticmethod
     @typedef.PFiniteDifferenceC
-    def pcentral(
-        f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray
-    ) -> typedef.RealFunction:
+    def pcentral(f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray) -> np.ndarray:
         r"""
         Computes the first-order partial central finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -339,9 +329,7 @@ class PFiniteDifference(FiniteDifference):
 
     @staticmethod
     @typedef.PFiniteDifferenceC
-    def pcentral2(
-        f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray
-    ) -> typedef.RealFunction:
+    def pcentral2(f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray) -> np.ndarray:
         r"""
         Computes the second-order partial central finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -366,7 +354,7 @@ class PFiniteDifference(FiniteDifference):
     @typedef.PFiniteDifferenceC
     def pcentraln(
         f: typedef.RealFunctionN, h: float, ndim: int, x: np.ndarray, n: int
-    ) -> typedef.RealFunction:
+    ) -> np.ndarray:
         r"""
         Computes the ``n``\th-order partial central finite differences of a ``dim``-dimensional
         real-valued function ``f`` (:math:`f: \mathbb{R}^{n} \mapsto \mathbb{R}`) at ``x`` using
@@ -393,11 +381,12 @@ class DifferenceQuotient:
     """
     Computes difference quotients of one-dimensional real-valued functions.
     """
-    @classmethod
-    def quotient(cls, f: typedef.RealFunction, h: float) -> typedef.RealFunction:
+    @staticmethod
+    @typedef.DifferenceQuotientC
+    def quotient(f: typedef.RealFunction, h: float, x: float) -> float:
         r"""
         Computes the first-order difference quotient of a one-dimensional real-valued function
-        ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+        ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
 
         In order of precedence:
 
@@ -421,13 +410,14 @@ class DifferenceQuotient:
             except ValueError:
                 fdiff = FiniteDifference.backward(f, h)
 
-        return lambda x: fdiff(x) / h
+        return fdiff(x) / h
 
-    @classmethod
-    def quotient2(cls, f: typedef.RealFunction, h: float) -> typedef.RealFunction:
+    @staticmethod
+    @typedef.DifferenceQuotientC
+    def quotient2(f: typedef.RealFunction, h: float, x: float) -> float:
         r"""
         Computes the second-order difference quotient of a one-dimensional real-valued function
-        ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+        ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
 
         In order of precendence:
 
@@ -451,13 +441,14 @@ class DifferenceQuotient:
             except ValueError:
                 fdiff = FiniteDifference.backward2(f, h)
 
-        return lambda x: fdiff(x) / (h ** 2)
+        return fdiff(x) / (h ** 2)
 
-    @classmethod
-    def quotientn(cls, f: typedef.RealFunction, h: float, n: int) -> typedef.RealFunction:
+    @staticmethod
+    @typedef.DifferenceQuotientC
+    def quotientn(f: typedef.RealFunction, h: float, x: float, n: int) -> float:
         r"""
         Computes the :math:`n`\th-order difference quotient of a one-dimensional real-valued
-        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
 
         In order of precedence:
 
@@ -481,20 +472,20 @@ class DifferenceQuotient:
             except ValueError:
                 fdiff = FiniteDifference.backwardn(f, h, n)
 
-        return lambda x: fdiff(x) / (h ** n)
+        return fdiff(x) / (h ** n)
 
 
 class PDifferenceQuotient:
     """
     Computes partial difference quotients of :math:`n`-dimensional real-valued functions.
     """
-    @classmethod
+    @staticmethod
     def pquotient(
-        cls, f: typedef.RealFunctionN, h: float, dim: int, *, ndim: int = None
-    ) -> typedef.RealFunctionN:
+        f: typedef.RealFunctionN, h: float, dim: int, x: np.ndarray, *, ndim: int = None
+    ) -> np.ndarray:
         r"""
         Computes the first-order partial difference quotients of a ``dim``-dimensional real-valued
-        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
 
         In order of precedence:
 
@@ -518,15 +509,15 @@ class PDifferenceQuotient:
             except ValueError:
                 fdiff = PFiniteDifference.pbackward(f, h, dim)
 
-        return lambda x: fdiff(x, ndim=ndim) / h
+        return fdiff(x, ndim=ndim) / h
 
-    @classmethod
+    @staticmethod
     def pquotient2(
-        cls, f: typedef.RealFunctionN, h: float, dim: int, *, ndim: int = None
-    ) -> typedef.RealFunctionN:
+        f: typedef.RealFunctionN, h: float, dim: int, x: np.ndarray, *, ndim: int = None
+    ) -> np.ndarray:
         r"""
         Computes the second-order partial difference quotients of a ``dim``-dimensional real-valued
-        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size ``h``.
+        function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step size ``h``.
 
         In order of precedence:
 
@@ -550,16 +541,16 @@ class PDifferenceQuotient:
             except ValueError:
                 fdiff = PFiniteDifference.pbackward2(f, h, dim)
 
-        return lambda x: fdiff(x, ndim=ndim) / (h ** 2)
+        return fdiff(x, ndim=ndim) / (h ** 2)
 
-    @classmethod
+    @staticmethod
     def pquotientn(
-        cls, f: typedef.RealFunctionN, h: float, dim: int, n: int, *, ndim: int = None
-    ) -> typedef.RealFunctionN:
+        f: typedef.RealFunctionN, h: float, dim: int, x: np.ndarray, n: int, *, ndim: int = None
+    ) -> np.ndarray:
         r"""
         Computes the :math:`n`\th-order partial difference quotients of a ``dim``-dimensional
-        real-valued function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) using step size
-        ``h``.
+        real-valued function ``f`` (:math:`f: \mathbb{R} \mapsto \mathbb{R}`) at ``x`` using step
+        size ``h``.
 
         In order of precedence:
 
@@ -583,4 +574,4 @@ class PDifferenceQuotient:
             except ValueError:
                 fdiff = PFiniteDifference.pbackwardn(f, h, dim, n)
 
-        return lambda x: fdiff(x, ndim=ndim) / (h ** n)
+        return fdiff(x, ndim=ndim) / (h ** n)
