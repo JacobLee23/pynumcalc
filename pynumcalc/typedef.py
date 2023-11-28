@@ -61,7 +61,6 @@ class FiniteDifferenceC:
             return self.func(f, h, x) if n is None else self.func(f, h, x, n)
 
         fdiff.__doc__ = self.func.__doc__
-
         return fdiff
 
 
@@ -129,5 +128,92 @@ class PFiniteDifferenceC:
             )
 
         fdiff.__doc__ = self.func.__doc__
+        return fdiff
 
+
+class DifferenceQuotientC:
+    """
+    :param func:
+    """
+    @typing.overload
+    def __init__(
+        self, func: typing.Callable[[RealFunction, float, float], RealFunction]
+    ): ...
+
+    @typing.overload
+    def __init__(
+        self, func: typing.Callable[[RealFunction, float, float, int], RealFunction]
+    ): ...
+
+    def __init__(self, func: typing.Callable):
+        self.func = func
+
+        functools.update_wrapper(self, self.func)
+
+    @typing.overload
+    def __call__(self, f: RealFunction, h: float) -> RealFunction: ...
+
+    @typing.overload
+    def __call__(self, f: RealFunction, h: float, n: int) -> RealFunction: ...
+
+    def __call__(self, f: RealFunction, h: float, n: int = None) -> RealFunction:
+        """
+        :param f:
+        :param h:
+        :param n:
+        :return:
+        """
+        def fdiff(x: float) -> float:
+            """
+            :param x:
+            :return:
+            """
+            return self.func(f, h, x) if n is None else self.func(f, h, x, n)
+
+        fdiff.__doc__ = self.func.__doc__
+        return fdiff
+
+
+class PDifferenceQuotientC:
+    """
+    :param func:
+    """
+    @typing.overload
+    def __init__(
+        self, func: typing.Callable[[RealFunctionN, float, int, np.ndarray, int], np.ndarray]
+    ): ...
+
+    @typing.overload
+    def __init__(
+        self, func: typing.Callable[[RealFunctionN, float, int, np.ndarray, int, int], np.ndarray]
+    ): ...
+
+    def __init__(self, func: typing.Callable):
+        self.func = func
+
+        functools.update_wrapper(self, self.func)
+
+    @typing.overload
+    def __call__(self, f: RealFunctionN, h: float, dim: int) -> RealFunctionN: ...
+
+    @typing.overload
+    def __call__(self, f: RealFunctionN, h: float, dim: int, n: int) -> RealFunctionN: ...
+
+    def __call__(self, f: RealFunctionN, h: float, dim: int, n: int = None) -> RealFunctionN:
+        """
+        :param f:
+        :param h:
+        :param dim:
+        :param n:
+        :return:
+        """
+        def fdiff(x: np.ndarray, *, ndim: int = None) -> np.ndarray:
+            """
+            :param x:
+            :param ndim:
+            :return:
+            """
+            return self.func(f, h, dim, x, ndim=ndim) if n is None else self.func(f, h, dim, x, n, ndim=ndim)
+
+        fdiff.__doc__ == self.func.__doc__
         return fdiff

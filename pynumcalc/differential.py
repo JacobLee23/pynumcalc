@@ -480,6 +480,7 @@ class PDifferenceQuotient:
     Computes partial difference quotients of :math:`n`-dimensional real-valued functions.
     """
     @staticmethod
+    @typedef.PDifferenceQuotientC
     def pquotient(
         f: typedef.RealFunctionN, h: float, dim: int, x: np.ndarray, *, ndim: int = None
     ) -> np.ndarray:
@@ -512,6 +513,7 @@ class PDifferenceQuotient:
         return fdiff(x, ndim=ndim) / h
 
     @staticmethod
+    @typedef.PDifferenceQuotientC
     def pquotient2(
         f: typedef.RealFunctionN, h: float, dim: int, x: np.ndarray, *, ndim: int = None
     ) -> np.ndarray:
@@ -544,6 +546,7 @@ class PDifferenceQuotient:
         return fdiff(x, ndim=ndim) / (h ** 2)
 
     @staticmethod
+    @typedef.PDifferenceQuotientC
     def pquotientn(
         f: typedef.RealFunctionN, h: float, dim: int, x: np.ndarray, n: int, *, ndim: int = None
     ) -> np.ndarray:
