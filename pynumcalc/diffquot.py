@@ -1,9 +1,10 @@
 """
 """
 
+import numpy as np
+
 from .finitediff import (
-    FiniteDifference, Forward, Backward, Central,
-    PFiniteDifference, PForward, PBackward, PCentral
+    Forward, Backward, Central, PForward, PBackward, PCentral
 )
 from .typedef import (
     RealFunction, RealFunctionN
@@ -11,117 +12,201 @@ from .typedef import (
 
 
 class DifferenceQuotient:
-    """
+    r"""
+    Computes difference quotients for a one-dimensional real-valued function ``f``,
+    :math:`f: \mathbb{R} \mapsto \mathbb{R}`, using step size ``h``.
     """
     def __init__(self, f: RealFunction, h: float):
         self._f  = f
         self._h = h
 
-        self._fdiff: FiniteDifference
-        try:
-            self._fdiff = Central(self.f, self.h)
-        except ValueError:
-            try:
-                self._fdiff = Forward(self.f, self.h)
-            except ValueError:
-                self._fdiff = Backward(self.f, self.h)
+        self._forward = Forward(self.f, self.h)
+        self._backward = Backward(self.f, self.h)
+        self._central = Central(self.f, self.h)
 
     @property
     def f(self) -> RealFunction:
-        """
+        r"""
+        A one-dimension real-valued function, :math:`f: \mathbb{R} \mapsto \mathbb{R}`.
         """
         return self._f
     
     @property
     def h(self) -> float:
         """
+        The step size used to compute difference quotients.
         """
         return self._h
     
     @h.setter
     def h(self, value: float) -> None:
         self._h = float(value)
-        self.fdiff.h = self.h
+        self.forward.h = self.backward.h = self.central.h = self.h
 
     @property
-    def fdiff(self) -> FiniteDifference:
+    def forward(self) -> Forward:
         """
         """
-        return self._fdiff
+        return self._forward
+    
+    @property
+    def backward(self) -> Backward:
+        """
+        """
+        return self._backward
+    
+    @property
+    def central(self) -> Central:
+        """
+        """
+        return self._central
 
     def first(self, x: float) -> float:
         """
+        Computes the first-order difference quotient for :py:attr:`f` at ``x`` using step size
+        :py:attr:`h`.
         """
-        return self.fdiff.first(x) / self.h
+        try:
+            fdiff = self.central.first(x)
+        except ValueError:
+            try:
+                fdiff = self.forward.first(x)
+            except ValueError:
+                fdiff = self.backward.first(x)
+
+        return fdiff / self.h
     
     def second(self, x: float) -> float:
         """
+        Computes the second-order difference quotient for :py:attr:`f` at ``x`` using step size
+        :py:attr:`h`.
         """
-        return self.fdiff.second(x) / pow(self.h, 2)
+        try:
+            fdiff = self.central.second(x)
+        except ValueError:
+            try:
+                fdiff = self.forward.second(x)
+            except ValueError:
+                fdiff = self.backward.second(x)
+
+        return fdiff / pow(self.h, 2)
     
     def nth(self, x: float, n: int) -> float:
+        r"""
+        Computes the ``n``\th-order difference quotient for :py:attr:`f` at ``x`` using step size
+        :py:attr:`h`.
         """
-        """
-        return self.fdiff.nth(x, n) / pow(self.h, n)
+        try:
+            fdiff = self.central.nth(x)
+        except ValueError:
+            try:
+                fdiff = self.forward.nth(x)
+            except ValueError:
+                fdiff = self.backward.nth(x)
+
+        return fdiff / pow(self.h, n)
 
 
 class PDifferenceQuotient:
     """
+    Computes difference quotients for a :math:`n`-dimensional real-valued function ``f``,
+    :math:`f: {\mathbb{R}}^{n} \mapsto \mathbb{R}`, of ``dim`` dimensions using step size ``h``.
     """
     def __init__(self, f: RealFunctionN, dim: int, h: float):
         self._f  = f
         self._dim = dim
         self._h = h
 
-        self._fdiff: PFiniteDifference
-        try:
-            self._fdiff = PCentral(self.f, self.h)
-        except ValueError:
-            try:
-                self._fdiff = PForward(self.f, self.h)
-            except ValueError:
-                self._fdiff = PBackward(self.f, self.h)
+        self._forward = PForward(self.f, self.dim, self.h)
+        self._backward = PForward(self.f, self.dim, self.h)
+        self._central = PCentral(self.f, self.dim, self.h)
 
     @property
     def f(self) -> RealFunction:
-        """
+        r"""
+        A :math:`n`-dimension real-valued function, :math:`f: {\mathbb{R}}^{n} \mapsto \mathbb{R}`,
+        of :py:attr:`dim` dimensions.
         """
         return self._f
     
     @property
     def dim(self) -> int:
         """
+        The number of dimensions of the domain of :py:attr:`f`.
         """
         return self._dim
     
     @property
     def h(self) -> float:
         """
+        The step size used to compute finite differences.
         """
         return self._h
     
     @h.setter
     def h(self, value: float) -> None:
         self._h = float(value)
-        self.fdiff.h = self.h
+        self.forward.h = self.backward.h = self.central.h = self.h
 
     @property
-    def fdiff(self) -> PFiniteDifference:
+    def forward(self) -> PForward:
         """
         """
-        return self._fdiff
+        return self._forward
+    
+    @property
+    def backward(self) -> PBackward:
+        """
+        """
+        return self._backward
+    
+    @property
+    def central(self) -> PCentral:
+        """
+        """
+        return self._central
 
-    def first(self, x: float) -> float:
+    def first(self, x: np.ndarray) -> np.ndarray:
         """
+        Computes the first-order difference quotient for :py:attr:`f` at ``x`` using step size
+        :py:attr:`h`.
         """
-        return self.fdiff.first(x) / self.h
+        try:
+            fdiff = self.central.first(x)
+        except ValueError:
+            try:
+                fdiff = self.forward.first(x)
+            except ValueError:
+                fdiff = self.backward.first(x)
+
+        return fdiff / self.h
     
-    def second(self, x: float) -> float:
+    def second(self, x: np.ndarray) -> np.ndarray:
         """
+        Computes the second-order difference quotient for :py:attr:`f` at ``x`` using step size
+        :py:attr:`h`.
         """
-        return self.fdiff.second(x) / pow(self.h, 2)
+        try:
+            fdiff = self.central.second(x)
+        except ValueError:
+            try:
+                fdiff = self.forward.second(x)
+            except ValueError:
+                fdiff = self.backward.second(x)
+
+        return fdiff / pow(self.h, 2)
     
-    def nth(self, x: float, n: int) -> float:
+    def nth(self, x: np.ndarray, n: int) -> np.ndarray:
+        r"""
+        Computes the ``n``\th-order difference quotient for :py:attr:`f` at ``x`` using step size
+        :py:attr:`h`.
         """
-        """
-        return self.fdiff.nth(x, n) / pow(self.h, n)
+        try:
+            fdiff = self.central.nth(x)
+        except ValueError:
+            try:
+                fdiff = self.forward.nth(x)
+            except ValueError:
+                fdiff = self.backward.nth(x)
+
+        return fdiff / pow(self.h, n)

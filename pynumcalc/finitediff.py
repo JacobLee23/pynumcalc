@@ -10,7 +10,7 @@ from .typedef import (
 
 
 class FiniteDifference:
-    """
+    r"""
     Computes finite differences for a one-dimensional real-valued function ``f``,
     :math:`f: \mathbb{R} \mapsto \mathbb{R}`, using step size ``h``.
     """
@@ -49,14 +49,14 @@ class FiniteDifference:
         self._h = float(value)
 
     def first(self, x: float) -> float:
-        r"""
+        """
         Computes the first-order finite difference of :py:attr:`f` at ``x`` using step size
         :py:attr:`h`.
         """
         return self._first(self.f, self.h, x)
     
     def second(self, x: float) -> float:
-        r"""
+        """
         Computes the second-order finite difference of :py:attr:`f` at ``x`` using step size
         :py:attr:`h`.
         """
@@ -68,6 +68,76 @@ class FiniteDifference:
         :py:attr:`h`.
         """
         return self._nth(self.f, self.h, x, n)
+
+
+class PFiniteDifference:
+    """
+    Computes finite differences for a :math:`n`-dimensional real-valued function ``f``,
+    :math:`f: {\mathbb{R}}^{n} \mapsto \mathbb{R}`, of ``dim`` dimensions using step size ``h``.
+    """
+    def __init__(self, f: RealFunctionN, dim: int, h: float):
+        self._f = f
+        self._dim = dim
+        self._h = h
+
+    @staticmethod
+    def _first(f: RealFunction, dim: int, h: float, x: np.ndarray) -> np.ndarray:
+        raise NotImplementedError
+    
+    @staticmethod
+    def _second(f: RealFunction, dim: int, h: float, x: np.ndarray) -> np.ndarray:
+        raise NotImplementedError
+    
+    @staticmethod
+    def _nth(f: RealFunction, dim: int, h: float, x: np.ndarray, n: int) -> np.ndarray:
+        raise NotImplementedError
+    
+    @property
+    def f(self) -> RealFunctionN:
+        r"""
+        A :math:`n`-dimension real-valued function, :math:`f: {\mathbb{R}}^{n} \mapsto \mathbb{R}`,
+        of :py:attr:`dim` dimensions.
+        """
+        return self._f
+    
+    @property
+    def dim(self) -> int:
+        """
+        The number of dimensions of the domain of :py:attr:`f`.
+        """
+        return self._dim
+    
+    @property
+    def h(self) -> float:
+        """
+        The step size used to compute finite differences.
+        """
+        return self._h
+    
+    @h.setter
+    def h(self, value: float) -> None:
+        self._h = float(value)
+
+    def first(self, x: float) -> np.ndarray:
+        """
+        Computes the first-order finite difference of :py:attr:`f` at ``x`` using step size
+        :py:attr:`h`.
+        """
+        return self._first(self.f, self.dim, self.h, x)
+    
+    def second(self, x: float) -> np.ndarray:
+        """
+        Computes the second-order finite difference of :py:attr:`f` at ``x`` using step size
+        :py:attr:`h`.
+        """
+        return self._second(self.f, self.dim, self.h, x)
+    
+    def nth(self, x: float, n: int) -> np.ndarray:
+        r"""
+        Computes the ``n``\th-order finite difference of :py:attr:`f` at ``x`` using step size
+        :py:attr:`h`.
+        """
+        return self._nth(self.f, self.dim, self.h, x, n)
 
 
 class Forward(FiniteDifference):
@@ -173,70 +243,6 @@ class Central(FiniteDifference):
         """
         array = np.arange(0, n + 1)
         return ((-1) ** array * scipy.special.comb(n, array) * f(x + (n / 2 - array) * h)).sum()
-
-
-class PFiniteDifference:
-    """
-    Computes finite differences for a :math:`n`-dimensional real-valued function ``f``,
-    :math:`f: {\mathbb{R}}^{n} \mapsto \mathbb{R}`, of ``dim`` dimensions using step size ``h``.
-    """
-    def __init__(self, f: RealFunctionN, dim: int, h: float):
-        self._f = f
-        self._dim = dim
-        self._h = h
-
-    @staticmethod
-    def _first(f: RealFunction, dim: int, h: float, x: np.ndarray) -> np.ndarray:
-        raise NotImplementedError
-    
-    @staticmethod
-    def _second(f: RealFunction, dim: int, h: float, x: np.ndarray) -> np.ndarray:
-        raise NotImplementedError
-    
-    @staticmethod
-    def _nth(f: RealFunction, dim: int, h: float, x: np.ndarray, n: int) -> np.ndarray:
-        raise NotImplementedError
-    
-    @property
-    def f(self) -> RealFunctionN:
-        r"""
-        A :math:`n`-dimension real-valued function, :math:`f: {\mathbb{R}}^{n} \mapsto \mathbb{R}`,
-        of :py:attr:`dim` dimensions.
-        """
-        return self._f
-    
-    @property
-    def dim(self) -> int:
-        """
-        The number of dimensions of the domain of :py:attr:`f`.
-        """
-        return self._dim
-    
-    @property
-    def h(self) -> float:
-        """
-        The step size used to compute finite differences.
-        """
-        return self._h
-    
-    @h.setter
-    def h(self, value: float) -> None:
-        self._h = float(value)
-
-    def first(self, x: float) -> np.ndarray:
-        """
-        """
-        return self._first(self.f, self.dim, self.h, x)
-    
-    def second(self, x: float) -> np.ndarray:
-        """
-        """
-        return self._second(self.f, self.dim, self.h, x)
-    
-    def nth(self, x: float, n: int) -> np.ndarray:
-        """
-        """
-        return self._nth(self.f, self.dim, self.h, x, n)
 
 
 class PForward(PFiniteDifference):
