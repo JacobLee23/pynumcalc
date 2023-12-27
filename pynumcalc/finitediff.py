@@ -1,11 +1,13 @@
 """
 """
 
+import typing
+
 import numpy as np
 import scipy.special
 
 from .typedef import (
-    RealFunction, RealFunctionN
+    RealFunction, RealNFunction
 )
 
 
@@ -71,29 +73,29 @@ class FiniteDifference:
 
 
 class PFiniteDifference:
-    """
+    r"""
     Computes finite differences for a :math:`n`-dimensional real-valued function ``f``,
-    :math:`f: {\mathbb{R}}^{n} \mapsto \mathbb{R}`, of ``dim`` dimensions using step size ``h``.
+    :math:`f: {\mathbb{R}}^{n} \mapsto \mathbb{R}`, of ``ndim`` dimensions using step size ``h``.
     """
-    def __init__(self, f: RealFunctionN, dim: int, h: float):
+    def __init__(self, f: RealNFunction, ndim: int, h: float):
         self._f = f
-        self._dim = dim
+        self._ndim = ndim
         self._h = h
 
     @staticmethod
-    def _first(f: RealFunction, dim: int, h: float, x: np.ndarray) -> np.ndarray:
+    def _first(f: RealFunction, dim: int, h: float, x: np.ndarray) -> float:
         raise NotImplementedError
     
     @staticmethod
-    def _second(f: RealFunction, dim: int, h: float, x: np.ndarray) -> np.ndarray:
+    def _second(f: RealFunction, dim: int, h: float, x: np.ndarray) -> float:
         raise NotImplementedError
     
     @staticmethod
-    def _nth(f: RealFunction, dim: int, h: float, x: np.ndarray, n: int) -> np.ndarray:
+    def _nth(f: RealFunction, dim: int, h: float, x: np.ndarray, n: int) -> float:
         raise NotImplementedError
     
     @property
-    def f(self) -> RealFunctionN:
+    def f(self) -> RealNFunction:
         r"""
         A :math:`n`-dimension real-valued function, :math:`f: {\mathbb{R}}^{n} \mapsto \mathbb{R}`,
         of :py:attr:`dim` dimensions.
@@ -101,11 +103,11 @@ class PFiniteDifference:
         return self._f
     
     @property
-    def dim(self) -> int:
+    def ndim(self) -> int:
         """
         The number of dimensions of the domain of :py:attr:`f`.
         """
-        return self._dim
+        return self._ndim
     
     @property
     def h(self) -> float:
@@ -118,26 +120,50 @@ class PFiniteDifference:
     def h(self, value: float) -> None:
         self._h = float(value)
 
-    def first(self, x: float) -> np.ndarray:
+    @typing.overload
+    def first(self, x: float) -> np.ndarray: ...
+
+    @typing.overload
+    def first(self, x: float, dim: int) -> float: ...
+
+    def first(self, x: float, dim: int = None) -> typing.Union[np.ndarray, float]:
         """
         Computes the first-order finite difference of :py:attr:`f` at ``x`` using step size
         :py:attr:`h`.
         """
-        return self._first(self.f, self.dim, self.h, x)
+        if dim is None:
+            return np.array([self._first(self.f, d, self.h, x) for d in range(self.ndim)])
+        return self._first(self.f, dim, self.h, x)
     
-    def second(self, x: float) -> np.ndarray:
+    @typing.overload
+    def second(self, x: float) -> np.ndarray: ...
+
+    @typing.overload
+    def second(self, x: float, dim: int) -> float: ...
+
+    def second(self, x: float, dim: int = None) -> np.ndarray:
         """
         Computes the second-order finite difference of :py:attr:`f` at ``x`` using step size
         :py:attr:`h`.
         """
-        return self._second(self.f, self.dim, self.h, x)
+        if dim is None:
+            return np.array([self._second(self.f, d, self.h, x) for d in range(self.ndim)])
+        return self._second(self.f, dim, self.h, x)
     
-    def nth(self, x: float, n: int) -> np.ndarray:
+    @typing.overload
+    def nth(self, x: float, n: int) -> np.ndarray: ...
+
+    @typing.overload
+    def nth(self, x: float, n: int, dim: int) -> float: ...
+
+    def nth(self, x: float, n: int, dim: int = None) -> typing.Union[np.ndarray, float]:
         r"""
         Computes the ``n``\th-order finite difference of :py:attr:`f` at ``x`` using step size
         :py:attr:`h`.
         """
-        return self._nth(self.f, self.dim, self.h, x, n)
+        if dim is None:
+            return np.array([self._nth(self.f, d, self.h, x, n) for d in range(self.ndim)])
+        return self._nth(self.f, dim, self.h, x, n)
 
 
 class Forward(FiniteDifference):
@@ -260,7 +286,7 @@ class PForward(PFiniteDifference):
         \end{bmatrix}
     """
     @staticmethod
-    def _first(f: RealFunctionN, dim: int, h: float, x: np.ndarray) -> np.ndarray:
+    def _first(f: RealNFunction, dim: int, h: float, x: np.ndarray) -> float:
         r"""
         .. math::
 
@@ -271,7 +297,7 @@ class PForward(PFiniteDifference):
         return f([*x[:dim], x[dim] + h, *x[(dim + 1):]]) - f(x)
     
     @staticmethod
-    def _second(f: RealFunctionN, dim: int, h: float, x: np.ndarray) -> np.ndarray:
+    def _second(f: RealNFunction, dim: int, h: float, x: np.ndarray) -> float:
         r"""
         .. math::
 
@@ -288,7 +314,7 @@ class PForward(PFiniteDifference):
         ) + f(x)
 
     @staticmethod
-    def _nth(f: RealFunctionN, dim: int, h: float, x: np.ndarray, n: int) -> np.ndarray:
+    def _nth(f: RealNFunction, dim: int, h: float, x: np.ndarray, n: int) -> float:
         r"""
         .. math::
 
@@ -319,7 +345,7 @@ class PBackward(PFiniteDifference):
         \end{bmatrix}
     """
     @staticmethod
-    def _first(f: RealFunctionN, dim: int, h: float, x: np.ndarray) -> np.ndarray:
+    def _first(f: RealNFunction, dim: int, h: float, x: np.ndarray) -> float:
         r"""
         .. math::
 
@@ -330,7 +356,7 @@ class PBackward(PFiniteDifference):
         return f(x) - f([*x[:dim], x[dim] - h, *x[(dim + 1):]])
     
     @staticmethod
-    def _second(f: RealFunctionN, dim: int, h: float, x: np.ndarray) -> np.ndarray:
+    def _second(f: RealNFunction, dim: int, h: float, x: np.ndarray) -> float:
         r"""
         .. math::
 
@@ -347,7 +373,7 @@ class PBackward(PFiniteDifference):
         )
     
     @staticmethod
-    def _nth(f: RealFunctionN, dim: int, h: float, x: np.ndarray, n: int) -> np.ndarray:
+    def _nth(f: RealNFunction, dim: int, h: float, x: np.ndarray, n: int) -> float:
         r"""
         .. math::
 
@@ -378,7 +404,7 @@ class PCentral(PFiniteDifference):
         \end{bmatrix}
     """
     @staticmethod
-    def _first(f: RealFunctionN, dim: int, h: float, x: np.ndarray) -> np.ndarray:
+    def _first(f: RealNFunction, dim: int, h: float, x: np.ndarray) -> float:
         r"""
         .. math::
 
@@ -395,7 +421,7 @@ class PCentral(PFiniteDifference):
         )
     
     @staticmethod
-    def _second(f: RealFunctionN, dim: int, h: float, x: np.ndarray) -> np.ndarray:
+    def _second(f: RealNFunction, dim: int, h: float, x: np.ndarray) -> float:
         r"""
         .. math::
 
@@ -412,7 +438,7 @@ class PCentral(PFiniteDifference):
         )
     
     @staticmethod
-    def _nth(f: RealFunctionN, dim: int, h: float, x: np.ndarray, n: int) -> np.ndarray:
+    def _nth(f: RealNFunction, dim: int, h: float, x: np.ndarray, n: int) -> float:
         r"""
         .. math::
 

@@ -7,7 +7,7 @@ from .finitediff import (
     Forward, Backward, Central, PForward, PBackward, PCentral
 )
 from .typedef import (
-    RealFunction, RealFunctionN
+    RealFunction, RealNFunction
 )
 
 
@@ -108,11 +108,11 @@ class DifferenceQuotient:
 
 
 class PDifferenceQuotient:
-    """
+    r"""
     Computes difference quotients for a :math:`n`-dimensional real-valued function ``f``,
     :math:`f: {\mathbb{R}}^{n} \mapsto \mathbb{R}`, of ``dim`` dimensions using step size ``h``.
     """
-    def __init__(self, f: RealFunctionN, dim: int, h: float):
+    def __init__(self, f: RealNFunction, dim: int, h: float):
         self._f  = f
         self._dim = dim
         self._h = h
