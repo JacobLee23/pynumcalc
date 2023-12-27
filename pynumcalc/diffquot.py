@@ -97,12 +97,12 @@ class DifferenceQuotient:
         :py:attr:`h`.
         """
         try:
-            fdiff = self.central.nth(x)
+            fdiff = self.central.nth(x, n)
         except ValueError:
             try:
-                fdiff = self.forward.nth(x)
+                fdiff = self.forward.nth(x, n)
             except ValueError:
-                fdiff = self.backward.nth(x)
+                fdiff = self.backward.nth(x, n)
 
         return fdiff / pow(self.h, n)
 
@@ -202,11 +202,11 @@ class PDifferenceQuotient:
         :py:attr:`h`.
         """
         try:
-            fdiff = self.central.nth(x)
+            fdiff = self.central.nth(x, n)
         except ValueError:
             try:
-                fdiff = self.forward.nth(x)
+                fdiff = self.forward.nth(x, n)
             except ValueError:
-                fdiff = self.backward.nth(x)
+                fdiff = self.backward.nth(x, n)
 
         return fdiff / pow(self.h, n)
