@@ -6,13 +6,11 @@ name = "pypi"
 [packages]
 numpy = "*"
 scipy = "*"
-sphinx = "*"
 
 [dev-packages]
 build = "*"
 twine = "*"
 pytest = "*"
-sphinx = "*"
 furo = "*"
 
 [requires]
