@@ -2,4 +2,6 @@
 """
 
 from . import integral
-from . import differential
+from ._diffquot import (
+    DifferenceQuotient, PDifferenceQuotient
+)

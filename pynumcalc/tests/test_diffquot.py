@@ -1,5 +1,5 @@
 """
-Unit tests for :py:mod:`pynumcalc.diffquot`.
+Unit tests for :py:mod:`pynumcalc._diffquot`.
 """
 
 import itertools
@@ -8,10 +8,10 @@ import typing
 import numpy as np
 import pytest
 
-from pynumcalc.diffquot import (
+from pynumcalc._diffquot import (
     DifferenceQuotient, PDifferenceQuotient
 )
-from pynumcalc.typedef import (
+from pynumcalc._typedef import (
     RealFunction, RealNFunction
 )
 

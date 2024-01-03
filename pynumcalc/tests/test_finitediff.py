@@ -1,5 +1,5 @@
 """
-Unit tests for :py:mod:`pynumcalc.finitediff`.
+Unit tests for :py:mod:`pynumcalc._finitediff`.
 """
 
 import itertools
@@ -8,10 +8,10 @@ import typing
 import numpy as np
 import pytest
 
-from pynumcalc.finitediff import (
+from pynumcalc._finitediff import (
     Forward, Backward, Central, PForward, PBackward, PCentral
 )
-from pynumcalc.typedef import (
+from pynumcalc._typedef import (
     RealFunction, RealNFunction
 )
 

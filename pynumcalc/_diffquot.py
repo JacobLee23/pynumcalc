@@ -3,10 +3,10 @@
 
 import numpy as np
 
-from .finitediff import (
+from ._finitediff import (
     Forward, Backward, Central, PForward, PBackward, PCentral
 )
-from .typedef import (
+from ._typedef import (
     RealFunction, RealNFunction
 )
 

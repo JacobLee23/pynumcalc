@@ -6,7 +6,7 @@ import typing
 import numpy as np
 import scipy.special
 
-from .typedef import (
+from ._typedef import (
     RealFunction, RealNFunction
 )
 
