@@ -5,11 +5,13 @@ name = "pypi"
 
 [packages]
 numpy = "*"
+scipy = "*"
 
 [dev-packages]
 build = "*"
 twine = "*"
 pytest = "*"
+furo = "*"
 
 [requires]
 python_version = "3.11"
