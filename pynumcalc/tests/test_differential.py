@@ -5,9 +5,9 @@ Unit tests for :py:mod:`pynumcalc.differential`.
 import numpy as np
 import pytest
 
+from pynumcalc.differential import FiniteDifference, Forward, Backward, Central, DifferenceQuotient
 from . import functions
 from .functions import RealFunctionCase
-from pynumcalc.differential import FiniteDifference, Forward, Backward, Central, DifferenceQuotient
 
 
 PMIN, PMAX = 1, 10

@@ -140,101 +140,175 @@ FUNCTIONS = [
         lambda h: (lambda x: -3 * x ** 2 - h ** 2 / 4),
         lambda h: (lambda x: -6 * x)
     ), RealFunctionCase(
-        lambda x: pow(x, 1 / 2),
-        lambda h: (lambda x: pow(x + h, 1 / 2) - pow(x, 1 / 2)),
-        lambda h: (lambda x: pow(x + 2 * h, 1 / 2) - 2 * pow(x + h, 1 / 2) + pow(x, 1 / 2)),
-        lambda h: (lambda x: pow(x, 1 / 2) - pow(x - h, 1 / 2)),
-        lambda h: (lambda x: pow(x, 1 / 2) - 2 * pow(x - h, 1 / 2) + pow(x - 2 * h, 1 / 2)),
-        lambda h: (lambda x: pow(x + h / 2, 1 / 2) - pow(x - h / 2, 1 / 2)),
-        lambda h: (lambda x: pow(x + h, 1 / 2) - 2 * pow(x, 1 / 2) + pow(x - h, 1 / 2)),
-        lambda h: (lambda x: (pow(x + h / 2, 1 / 2) - pow(x - h / 2, 1 / 2)) / h),
+        lambda x: np.power(np.abs(x), 1 / 2),
+        lambda h: (lambda x: np.power(np.abs(x + h), 1 / 2) - np.power(np.abs(x), 1 / 2)),
         lambda h: (
-            lambda x: (pow(x + h, 1 / 2) - 2 * pow(x, 1 / 2) + pow(x - h, 1 / 2)) / pow(h, 2)
-        ), np.linspace(1, 10)
+            lambda x: (
+                np.power(np.abs(x + 2 * h), 1 / 2)
+                - 2 * np.power(np.abs(x + h), 1 / 2)
+                + np.power(np.abs(x), 1 / 2)
+            )
+        ), lambda h: (lambda x: np.power(np.abs(x), 1 / 2) - np.power(np.abs(x - h), 1 / 2)),
+        lambda h: (
+            lambda x: (
+                np.power(np.abs(x), 1 / 2)
+                - 2 * np.power(np.abs(x - h), 1 / 2)
+                + np.power(np.abs(x - 2 * h), 1 / 2)
+            )
+        ), lambda h: (
+            lambda x: np.power(np.abs(x + h / 2), 1 / 2) - np.power(np.abs(x - h / 2), 1 / 2)
+        ), lambda h: (
+            lambda x: (
+                np.power(np.abs(x + h), 1 / 2)
+                - 2 * np.power(np.abs(x), 1 / 2)
+                + np.power(np.abs(x - h), 1 / 2)
+            )
+        ), lambda h: (
+            lambda x: (
+                np.power(np.abs(x + h / 2), 1 / 2)
+                - np.power(np.abs(x - h / 2), 1 / 2)
+            ) / h
+        ), lambda h: (
+            lambda x: (
+                np.power(np.abs(x + h), 1 / 2)
+                - 2 * np.power(np.abs(x), 1 / 2)
+                + np.power(np.abs(x - h), 1 / 2)
+            ) / pow(h, 2)
+        ), np.concatenate(
+            [np.linspace(-10, -1, endpoint=False), np.linspace(10, 1, endpoint=False)]
+        )
     ), RealFunctionCase(
-        lambda x: pow(-x, 1 / 2),
-        lambda h: (lambda x: pow(-x - h, 1 / 2) - pow(-x, 1 / 2)),
-        lambda h: (lambda x: pow(-x - 2 * h, 1 / 2) - 2 * pow(-x - h, 1 / 2) + pow(-x, 1 / 2)),
-        lambda h: (lambda x: pow(-x, 1 / 2) - pow(-x + h, 1 / 2)),
-        lambda h: (lambda x: pow(-x, 1 / 2) - 2 * pow(-x + h, 1 / 2) + pow(-x + 2 * h, 1 / 2)),
-        lambda h: (lambda x: pow(-x - h / 2, 1 / 2) - pow(-x + h / 2, 1 / 2)),
-        lambda h: (lambda x: pow(-x - h, 1 / 2) - 2 * pow(-x, 1 / 2) + pow(-x + h, 1 / 2)),
-        lambda h: (lambda x: (pow(-x - h / 2, 1 / 2) - pow(-x + h / 2, 1 / 2)) / h),
+        lambda x:- np.power(np.abs(x), 1 / 2),
+        lambda h: (lambda x: -np.power(np.abs(x + h), 1 / 2) + np.power(np.abs(x), 1 / 2)),
         lambda h: (
-            lambda x: (pow(-x - h, 1 / 2) - 2 * pow(-x, 1 / 2) + pow(-x + h, 1 / 2)) / pow(h, 2)
-        ), np.linspace(-10, -1)
+            lambda x: (
+                -np.power(np.abs(x + 2 * h), 1 / 2)
+                + 2 * np.power(np.abs(x + h), 1 / 2)
+                - np.power(np.abs(x), 1 / 2)
+            )
+        ), lambda h: (lambda x: -np.power(np.abs(x), 1 / 2) + np.power(np.abs(x - h), 1 / 2)),
+        lambda h: (
+            lambda x: (
+                -np.power(np.abs(x), 1 / 2)
+                + 2 * np.power(np.abs(x - h), 1 / 2)
+                - np.power(np.abs(x - 2 * h), 1 / 2)
+            )
+        ), lambda h: (
+            lambda x: -np.power(np.abs(x + h / 2), 1 / 2) + np.power(np.abs(x - h / 2), 1 / 2)
+        ), lambda h: (
+            lambda x: (
+                -np.power(np.abs(x + h), 1 / 2)
+                + 2 * np.power(np.abs(x), 1 / 2)
+                - np.power(np.abs(x - h), 1 / 2)
+            )
+        ), lambda h: (
+            lambda x: (
+                -np.power(np.abs(x + h / 2), 1 / 2)
+                + np.power(np.abs(x - h / 2), 1 / 2)
+            ) / h
+        ), lambda h: (
+            lambda x: (
+                -np.power(np.abs(x + h), 1 / 2)
+                + 2 * np.power(np.abs(x), 1 / 2)
+                - np.power(np.abs(x - h), 1 / 2)
+            ) / pow(h, 2)
+        ), np.concatenate(
+            [np.linspace(-10, -1, endpoint=False), np.linspace(10, 1, endpoint=False)]
+        )
     ), RealFunctionCase(
-        lambda x: -pow(x, 1 / 2),
-        lambda h: (lambda x: -pow(x + h, 1 / 2) + pow(x, 1 / 2)),
-        lambda h: (lambda x: -pow(x + 2 * h, 1 / 2) + 2 * pow(x + h, 1 / 2) - pow(x, 1 / 2)),
-        lambda h: (lambda x: -pow(x, 1 / 2) + pow(x - h, 1 / 2)),
-        lambda h: (lambda x: -pow(x, 1 / 2) + 2 * pow(x - h, 1 / 2) - pow(x - 2 * h, 1 / 2)),
-        lambda h: (lambda x: -pow(x + h / 2, 1 / 2) + pow(x - h / 2, 1 / 2)),
-        lambda h: (lambda x: -pow(x + h, 1 / 2) + 2 * pow(x, 1 / 2) - pow(x - h, 1 / 2)),
-        lambda h: (lambda x: (-pow(x + h / 2, 1 / 2) + pow(x - h / 2, 1 / 2)) / h),
+        lambda x: np.sign(x) * np.power(np.abs(x), 1 / 3),
         lambda h: (
-            lambda x: (-pow(x + h, 1 / 2) + 2 * pow(x, 1 / 2) - pow(x - h, 1 / 2)) / pow(h, 2)
-        ), np.linspace(1, 10)
+            lambda x: (
+                np.sign(x + h) * np.power(np.abs(x + h), 1 / 3)
+                - np.sign(x) * np.power(np.abs(x),  1 / 3)
+            )
+        ), lambda h: (
+            lambda x: (
+                np.sign(x + 2 * h) * np.power(np.abs(x + 2 * h), 1 / 3)
+                - 2 * np.sign(x + h) * np.power(np.abs(x + h), 1 / 3)
+                + np.sign(x) * np.power(np.abs(x), 1 / 3)
+            )
+        ), lambda h: (
+            lambda x: (
+                np.sign(x) * np.power(np.abs(x), 1 / 3)
+                - np.sign(x - h) * np.power(np.abs(x - h), 1 / 3)
+            )
+        ), lambda h: (
+            lambda x: (
+                np.sign(x) * np.power(np.abs(x), 1 / 3)
+                - 2 * np.sign(x - h) * np.power(np.abs(x - h), 1 / 3)
+                + np.sign(x - 2 * h) * np.power(np.abs(x - 2 * h), 1 / 3)
+            )
+        ), lambda h: (
+            lambda x: (
+                np.sign(x + h / 2) * np.power(np.abs(x + h / 2), 1 / 3)
+                - np.sign(x - h / 2) * np.power(np.abs(x - h / 2), 1 / 3)
+            )
+        ), lambda h: (
+            lambda x: (
+                np.sign(x + h) * np.power(np.abs(x + h), 1 / 3)
+                - 2 * np.sign(x) * np.power(np.abs(x), 1 / 3)
+                + np.sign(x - h) * np.power(np.abs(x - h), 1 / 3)
+            )
+        ), lambda h: (
+            lambda x: (
+                np.sign(x + h / 2) * np.power(np.abs(x + h / 2), 1 / 3)
+                - np.sign(x - h / 2) * np.power(np.abs(x - h / 2), 1 / 3)
+            ) / h
+        ), lambda h: (
+            lambda x: (
+                np.sign(x + h) * np.power(np.abs(x + h), 1 / 3)
+                - 2 * np.sign(x) * np.power(np.abs(x), 1 / 3)
+                + np.sign(x - h) * np.power(np.abs(x - h), 1 / 3)
+            ) / np.power(h, 2)
+        )
     ), RealFunctionCase(
-        lambda x: -pow(-x, 1 / 2),
-        lambda h: (lambda x: -pow(-x - h, 1 / 2) + pow(-x, 1 / 2)),
-        lambda h: (lambda x: -pow(-x - 2 * h, 1 / 2) + 2 * pow(-x - h, 1 / 2) - pow(-x, 1 / 2)),
-        lambda h: (lambda x: -pow(-x, 1 / 2) + pow(-x + h, 1 / 2)),
-        lambda h: (lambda x: -pow(-x, 1 / 2) + 2 * pow(-x + h, 1 / 2) - pow(-x + 2 * h, 1 / 2)),
-        lambda h: (lambda x: -pow(-x - h / 2, 1 / 2) + pow(-x + h / 2, 1 / 2)),
-        lambda h: (lambda x: -pow(-x - h, 1 / 2) + 2 * pow(-x, 1 / 2) - pow(-x + h, 1 / 2)),
-        lambda h: (lambda x: (-pow(-x - h / 2, 1 / 2) + pow(-x + h / 2, 1 / 2)) / h),
+        lambda x: -np.sign(x) * np.power(np.abs(x), 1 / 3),
         lambda h: (
-            lambda x: (-pow(-x - h, 1 / 2) + 2 * pow(-x, 1 / 2) - pow(-x + h, 1 / 2)) / pow(h, 2)
-        ), np.linspace(-10, -1)
-    ), RealFunctionCase(
-        lambda x: pow(x, 1 / 3),
-        lambda h: (lambda x: pow(x + h, 1 / 3) - pow(x, 1 / 3)),
-        lambda h: (lambda x: pow(x + 2 * h, 1 / 3) - 2 * pow(x + h, 1 / 3) + pow(x, 1 / 3)),
-        lambda h: (lambda x: pow(x, 1 / 3) - pow(x - h, 1 / 3)),
-        lambda h: (lambda x: pow(x, 1 / 3) - 2 * pow(x - h, 1 / 3) + pow(x - 2 * h, 1 / 3)),
-        lambda h: (lambda x: pow(x + h / 2, 1 / 3) - pow(x - h / 2, 1 / 3)),
-        lambda h: (lambda x: pow(x + h, 1 / 3) - 2 * pow(x, 1 / 3) + pow(x - h, 1 / 3)),
-        lambda h: (lambda x: (pow(x + h / 2, 1 / 3) - pow(x - h / 2, 1 / 3)) / h),
-        lambda h: (
-            lambda x: (pow(x + h, 1 / 3) - 2 * pow(x, 1 / 3) + pow(x - h, 1 / 3)) / pow(h, 2)
-        ), np.linspace(1, 10)
-    ), RealFunctionCase(
-        lambda x: pow(-x, 1 / 3),
-        lambda h: (lambda x: pow(-x - h, 1 / 3) - pow(-x, 1 / 3)),
-        lambda h: (lambda x: pow(-x - 2 * h, 1 / 3) - 2 * pow(-x - h, 1 / 3) + pow(-x, 1 / 3)),
-        lambda h: (lambda x: pow(-x, 1 / 3) - pow(-x + h, 1 / 3)),
-        lambda h: (lambda x: pow(-x, 1 / 3) - 2 * pow(-x + h, 1 / 3) + pow(-x + 2 * h, 1 / 3)),
-        lambda h: (lambda x: pow(-x - h / 2, 1 / 3) - pow(-x + h / 2, 1 / 3)),
-        lambda h: (lambda x: pow(-x - h, 1 / 3) - 2 * pow(-x, 1 / 3) + pow(-x + h, 1 / 3)),
-        lambda h: (lambda x: (pow(-x - h / 2, 1 / 3) - pow(-x + h / 2, 1 / 3)) / h),
-        lambda h: (
-            lambda x: (pow(-x - h, 1 / 3) - 2 * pow(-x, 1 / 3) + pow(-x + h, 1 / 3)) / pow(h, 2)
-        ), np.linspace(-10, -1)
-    ), RealFunctionCase(
-        lambda x: -pow(x, 1 / 3),
-        lambda h: (lambda x: -pow(x + h, 1 / 3) + pow(x, 1 / 3)),
-        lambda h: (lambda x: -pow(x + 2 * h, 1 / 3) + 2 * pow(x + h, 1 / 3) - pow(x, 1 / 3)),
-        lambda h: (lambda x: -pow(x, 1 / 3) + pow(x - h, 1 / 3)),
-        lambda h: (lambda x: -pow(x, 1 / 3) + 2 * pow(x - h, 1 / 3) - pow(x - 2 * h, 1 / 3)),
-        lambda h: (lambda x: -pow(x + h / 2, 1 / 3) + pow(x - h / 2, 1 / 3)),
-        lambda h: (lambda x: -pow(x + h, 1 / 3) + 2 * pow(x, 1 / 3) - pow(x - h, 1 / 3)),
-        lambda h: (lambda x: (-pow(x + h / 2, 1 / 3) + pow(x - h / 2, 1 / 3)) / h),
-        lambda h: (
-            lambda x: (-pow(x + h, 1 / 3) + 2 * pow(x, 1 / 3) - pow(x - h, 1 / 3)) / pow(h, 2)
-        ), np.linspace(1, 10)
-    ), RealFunctionCase(
-        lambda x: -pow(-x, 1 / 3),
-        lambda h: (lambda x: -pow(-x - h, 1 / 3) + pow(-x, 1 / 3)),
-        lambda h: (lambda x: -pow(-x - 2 * h, 1 / 3) + 2 * pow(-x - h, 1 / 3) - pow(-x, 1 / 3)),
-        lambda h: (lambda x: -pow(-x, 1 / 3) + pow(-x + h, 1 / 3)),
-        lambda h: (lambda x: -pow(-x, 1 / 3) + 2 * pow(-x + h, 1 / 3) - pow(-x + 2 * h, 1 / 3)),
-        lambda h: (lambda x: -pow(-x - h / 2, 1 / 3) + pow(-x + h / 2, 1 / 3)),
-        lambda h: (lambda x: -pow(-x - h, 1 / 3) + 2 * pow(-x, 1 / 3) - pow(-x + h, 1 / 3)),
-        lambda h: (lambda x: (-pow(-x - h / 2, 1 / 3) + pow(-x + h / 2, 1 / 3)) / h),
-        lambda h: (
-            lambda x: (-pow(-x - h, 1 / 3) + 2 * pow(-x, 1 / 3) - pow(-x + h, 1 / 3)) / pow(h, 2)
-        ), np.linspace(-10, -1)
+            lambda x: (
+                -np.sign(x + h) * np.power(np.abs(x + h), 1 / 3)
+                + np.sign(x) * np.power(np.abs(x),  1 / 3)
+            )
+        ), lambda h: (
+            lambda x: (
+                -np.sign(x + 2 * h) * np.power(np.abs(x + 2 * h), 1 / 3)
+                + 2 * np.sign(x + h) * np.power(np.abs(x + h), 1 / 3)
+                - np.sign(x) * np.power(np.abs(x), 1 / 3)
+            )
+        ), lambda h: (
+            lambda x: (
+                -np.sign(x) * np.power(np.abs(x), 1 / 3)
+                + np.sign(x - h) * np.power(np.abs(x - h), 1 / 3)
+            )
+        ), lambda h: (
+            lambda x: (
+                -np.sign(x) * np.power(np.abs(x), 1 / 3)
+                + 2 * np.sign(x - h) * np.power(np.abs(x - h), 1 / 3)
+                - np.sign(x - 2 * h) * np.power(np.abs(x - 2 * h), 1 / 3)
+            )
+        ), lambda h: (
+            lambda x: (
+                -np.sign(x + h / 2) * np.power(np.abs(x + h / 2), 1 / 3)
+                + np.sign(x - h / 2) * np.power(np.abs(x - h / 2), 1 / 3)
+            )
+        ), lambda h: (
+            lambda x: (
+                -np.sign(x + h) * np.power(np.abs(x + h), 1 / 3)
+                + 2 * np.sign(x) * np.power(np.abs(x), 1 / 3)
+                - np.sign(x - h) * np.power(np.abs(x - h), 1 / 3)
+            )
+        ), lambda h: (
+            lambda x: (
+                -np.sign(x + h / 2) * np.power(np.abs(x + h / 2), 1 / 3)
+                + np.sign(x - h / 2) * np.power(np.abs(x - h / 2), 1 / 3)
+            ) / h
+        ), lambda h: (
+            lambda x: (
+                -np.sign(x + h) * np.power(np.abs(x + h), 1 / 3)
+                + 2 * np.sign(x) * np.power(np.abs(x), 1 / 3)
+                - np.sign(x - h) * np.power(np.abs(x - h), 1 / 3)
+            ) / np.power(h, 2)
+        )
     ), RealFunctionCase(
         lambda x: 1 / x,
         lambda h: (lambda x: -h / (x * (x + h))),
