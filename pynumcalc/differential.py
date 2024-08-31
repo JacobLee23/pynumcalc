@@ -21,7 +21,7 @@ class FiniteDifference:
     :param h: The step size of the finite difference
     :param dim: The dimension of the domain of ``f``
     """
-    _dtype: type = np.float64
+    dtype: type = np.float64
 
     _h = None
 
@@ -41,7 +41,7 @@ class FiniteDifference:
         self.h = h
 
     @staticmethod
-    def domain_membership(x: typing.Union[float, np.array], dim: typing.Optional[int]) -> bool:
+    def domain_membership(x: typing.Union[float, np.ndarray], dim: typing.Optional[int]) -> bool:
         r"""
         Tests the membership of an element in the domain of some real-valued function :math:`f`
         defined as :math:`f: {\mathbb{R}}^{n} \to \mathbb{R}` based on the dimension of the test
@@ -192,7 +192,9 @@ class FiniteDifference:
         :param x: The domain element at which to calculate the finite difference
         :return: The first-order finite difference at ``x``
         """
-        return self._first(self.f, self.h, float(x), self.dim)
+        return self._first(
+            self.f, self.h, x if isinstance(x, np.ndarray) else float(x), self.dim
+        )
 
     @typing.overload
     def second(self, x: Number) -> float: ...
@@ -213,7 +215,9 @@ class FiniteDifference:
         :param x: The domain element at which to calculate the finite difference
         :return: The second-order finite difference at ``x``
         """
-        return self._second(self.f, self.h, float(x), self.dim)
+        return self._second(
+            self.f, self.h, x if isinstance(x, np.ndarray) else float(x), self.dim
+        )
 
     @typing.overload
     def nth(self, x: Number, n: int) -> float: ...
@@ -235,7 +239,9 @@ class FiniteDifference:
         :param n: The order of the finite difference
         :return: The ``n``\th-order finite difference at ``x``
         """
-        return self._nth(self.f, self.h, float(x), n, self.dim)
+        return self._nth(
+            self.f, self.h, x if isinstance(x, np.ndarray) else float(x), n, self.dim
+        )
 
 
 class Forward(FiniteDifference):
@@ -303,7 +309,7 @@ class Forward(FiniteDifference):
         return np.fromiter(
             (
                 f(np.where(index == d, x[d] + h, x)) - f(x) for d in range(dim)
-            ), cls._dtype
+            ), cls.dtype
         )
 
     @classmethod
@@ -353,7 +359,7 @@ class Forward(FiniteDifference):
                 ) - 2 * f(
                     np.where(index == d, x[d] + h, x)
                 ) + f(x) for d in range(dim)
-            ), cls._dtype
+            ), cls.dtype
         )
 
     @classmethod
@@ -390,12 +396,12 @@ class Forward(FiniteDifference):
         """
         assert cls.domain_membership(x, dim)
 
-        k = np.arange(0, n + 1, 1, cls._dtype)
+        k = np.arange(0, n + 1, 1, cls.dtype)
 
         if dim is None:
             return (
                 np.power(-1, n - k) * scipy.special.comb(n, k) * np.fromiter(
-                    map(f, x + k * h), cls._dtype
+                    map(f, x + k * h), cls.dtype
                 )
             ).sum()
 
@@ -408,7 +414,7 @@ class Forward(FiniteDifference):
                         np.where(index == d, x[d] + k * h, x)
                     )
                 ).sum() for d in range(dim)
-            ), cls._dtype
+            ), cls.dtype
         )
 
 
@@ -479,7 +485,7 @@ class Backward(FiniteDifference):
                 f(x) - f(
                     np.where(index == d, x[d] - h, x)
                 ) for d in range(dim)
-            ), cls._dtype
+            ), cls.dtype
         )
 
     @classmethod
@@ -529,7 +535,7 @@ class Backward(FiniteDifference):
                 ) + f(
                     np.where(index == d, x[d] - 2 * h, x)
                 ) for d in range(dim)
-            ), cls._dtype
+            ), cls.dtype
         )
 
     @classmethod
@@ -566,12 +572,12 @@ class Backward(FiniteDifference):
         """
         assert cls.domain_membership(x, dim)
 
-        k = np.arange(0, n + 1, 1, cls._dtype)
+        k = np.arange(0, n + 1, 1, cls.dtype)
 
         if dim is None:
             return (
                 np.power(-1, k) * scipy.special.comb(n, k) * np.fromiter(
-                    map(f, x - k * h), cls._dtype
+                    map(f, x - k * h), cls.dtype
                 )
             ).sum()
 
@@ -584,7 +590,7 @@ class Backward(FiniteDifference):
                         np.where(index == d, x[d] - k * h, x)
                     )
                 ).sum() for d in range(dim)
-            ), cls._dtype
+            ), cls.dtype
         )
 
 
@@ -659,7 +665,7 @@ class Central(FiniteDifference):
                 ) - f(
                     np.where(index == d, x[d] - h / 2, x)
                 ) for d in range(dim)
-            ), cls._dtype
+            ), cls.dtype
         )
 
     @classmethod
@@ -709,7 +715,7 @@ class Central(FiniteDifference):
                 ) - 2 * f(x) + f(
                     np.where(index == d, x[d] - h, x)
                 ) for d in range(dim)
-            ), cls._dtype
+            ), cls.dtype
         )
 
     @classmethod
@@ -746,7 +752,7 @@ class Central(FiniteDifference):
         """
         assert cls.domain_membership(x, dim)
 
-        k = np.arange(0, n + 1, 1, cls._dtype)
+        k = np.arange(0, n + 1, 1, cls.dtype)
 
         if dim is None:
             return (
@@ -764,7 +770,7 @@ class Central(FiniteDifference):
                         np.where(index == d, x[d] + (n / 2 - k) * h, x)
                     )
                 ).sum() for d in range(dim)
-            ), cls._dtype
+            ), cls.dtype
         )
 
 

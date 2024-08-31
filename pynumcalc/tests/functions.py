@@ -2,7 +2,6 @@
 Test case functions for the unit tests in :py:mod:`pynumcalc.tests.test_differential`.
 """
 
-from numbers import Number
 import typing
 
 import numpy as np
@@ -73,7 +72,6 @@ class RealFunctionCase(typing.NamedTuple):
     dquotient1: typing.Callable[[float], RealFunction]
     dquotient2: typing.Callable[[float], RealFunction]
     domain: np.ndarray = DOMAIN
-    domain: typing.Tuple[Number, Number] = DOMAIN
 
 
 FUNCTIONS = [
