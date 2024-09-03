@@ -1,7 +1,5 @@
 """
 """
 
+from . import differential
 from . import integral
-from ._diffquot import (
-    DifferenceQuotient, PDifferenceQuotient
-)
